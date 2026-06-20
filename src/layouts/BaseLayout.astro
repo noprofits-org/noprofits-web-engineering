@@ -1,0 +1,108 @@
+---
+import '../styles/global.css';
+import {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  PHONE_TEL,
+  EMAIL,
+  AREA_SERVED,
+  OG_IMAGE_PATH,
+} from '../data/site.ts';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Path of the current page for canonical/OG, e.g. "/" or "/guides/..." */
+  path?: string;
+  ogType?: string;
+  /** Optional per-page JSON-LD object(s): Service, Article, etc. */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  path = '/',
+  ogType = 'website',
+  jsonLd,
+} = Astro.props;
+
+const canonical = new URL(path, SITE_URL).href;
+const ogImage = new URL(OG_IMAGE_PATH, SITE_URL).href;
+
+// Site-wide Organization schema — emitted on every page.
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: new URL('/favicon.svg', SITE_URL).href,
+  description: SITE_DESCRIPTION,
+  email: EMAIL,
+  areaServed: AREA_SERVED,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: PHONE_TEL,
+    email: EMAIL,
+    contactType: 'customer service',
+    areaServed: 'US-WA',
+  },
+};
+
+// Normalize any per-page JSON-LD into an array for clean iteration.
+const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {/*
+      PRE-LAUNCH noindex TOGGLE — this is a real, public, indexable site, so the
+      tag below is commented out. Uncomment the single line to take the site out
+      of search results before launch, then re-comment to go live.
+    */}
+    {/* <meta name="robots" content="noindex, nofollow" /> */}
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="noprofits.org — free websites for non-profits" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Structured data: site-wide Organization + any per-page schema. -->
+    <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    {pageLd.map((obj) => (
+      <script type="application/ld+json" set:html={JSON.stringify(obj)} />
+    ))}
+
+    <!-- Fonts: Bricolage Grotesque (headings) + Hanken Grotesk (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="np-skiplink" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

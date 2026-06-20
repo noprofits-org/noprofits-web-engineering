@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Page not found — noprofits.org';
+const description = 'That page could not be found. Head back to the noprofits.org homepage or get in touch about a free website for your non-profit.';
+---
+
+<BaseLayout title={title} description={description} path="/404/">
+  <Header />
+
+  <main id="main" class="np-notfound">
+    <div class="np-container np-notfound__inner">
+      <p class="np-notfound__code" aria-hidden="true">404</p>
+      <h1 class="np-notfound__h1">We couldn't find that page.</h1>
+      <p class="np-notfound__p">
+        The link may be old or mistyped. Everything still starts from the homepage —
+        or tell us about your organization and we'll be in touch about your free site.
+      </p>
+      <div class="np-notfound__ctas">
+        <a href="/" class="np-btn np-btn-primary">Back to homepage</a>
+        <a href="/#contact" class="np-btn np-btn-secondary">Start your site</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .np-notfound {
+    background: linear-gradient(180deg, #eaf3f7 0%, #f7f4ee 100%);
+  }
+  .np-notfound__inner {
+    max-width: 640px;
+    padding-top: 72px;
+    padding-bottom: 88px;
+    text-align: center;
+  }
+  .np-notfound__code {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--accent);
+    margin: 0;
+  }
+  .np-notfound__h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 18px 0 0;
+  }
+  .np-notfound__p {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 16px auto 0;
+    max-width: 32em;
+    text-wrap: pretty;
+  }
+  .np-notfound__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 30px;
+  }
+  @media (min-width: 900px) {
+    .np-notfound__h1 { font-size: 40px; }
+    .np-notfound__inner { padding-top: 104px; padding-bottom: 120px; }
+  }
+</style>

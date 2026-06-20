@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  ::selection { background: #cfe6ef; }
+  @media print {
+    .np-noprint { display: none !important; }
+    body { background: #fff !important; }
+    .np-page { box-shadow: none !important; margin: 0 !important; border-radius: 0 !important; }
+  }
+</style>
+</helmet>
+<div style="font-family:'Hanken Grotesk',system-ui,sans-serif;color:#16221d;background:#e9ece8;min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;padding:0 0 60px;">
+
+  <div class="np-noprint" style="position:sticky;top:0;z-index:40;background:#16221d;color:#f4f1ea;">
+    <div style="max-width:880px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <span style="display:flex;align-items:center;gap:9px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;">
+        <span style="width:24px;height:24px;border-radius:50%;background:#9fd0bf;display:inline-flex;align-items:center;justify-content:center;color:#143f33;font-weight:800;font-size:13px;">n</span>
+        noprofits.org — Mobile-First Spec
+      </span>
+      <button onClick="{{ printDoc }}" style="background:#9fd0bf;border:none;color:#143f33;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:9px 18px;border-radius:9px;">Print / Save as PDF</button>
+    </div>
+  </div>
+
+  <article class="np-page" style="max-width:880px;margin:34px auto;background:#fff;box-shadow:0 20px 50px -34px rgba(20,40,33,0.4);border-radius:6px;padding:72px 80px;">
+
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid #2f7da3;padding-bottom:18px;">
+      <span style="width:26px;height:26px;border-radius:50%;background:#2f7da3;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;">n</span>
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;color:#16221d;">noprofits.org</span>
+      <span style="margin-left:auto;font-family:monospace;font-size:12px;color:#9aa39c;">Design spec · v1 · Jun 2026</span>
+    </div>
+
+    <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;line-height:1.08;letter-spacing:-0.02em;margin:32px 0 0;">Mobile-First Design Spec</h1>
+    <p style="font-size:18px;color:#43504a;margin:16px 0 0;line-height:1.6;max-width:46em;">The reference for how the noprofits.org site is designed and built — starting from the smallest screen and progressively enhancing up. Every layout, type size, and interaction is defined at the mobile base first; larger breakpoints only add space and columns, never new behavior.</p>
+
+    <!-- PRINCIPLES -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 14px;color:#16221d;">Core principles</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;"><strong style="display:block;font-size:15px;margin-bottom:4px;">Design the phone first</strong><span style="font-size:14.5px;color:#43504a;">Author base styles for ≤599px, then layer min-width media queries upward.</span></div>
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;"><strong style="display:block;font-size:15px;margin-bottom:4px;">One column by default</strong><span style="font-size:14.5px;color:#43504a;">Every multi-column grid collapses to a single stacked column on mobile.</span></div>
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;"><strong style="display:block;font-size:15px;margin-bottom:4px;">Thumb-friendly targets</strong><span style="font-size:14.5px;color:#43504a;">All tap targets are ≥44×44px with comfortable spacing between them.</span></div>
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;"><strong style="display:block;font-size:15px;margin-bottom:4px;">Performance is a feature</strong><span style="font-size:14.5px;color:#43504a;">Static Astro output, responsive images, system-fast fonts — fast on cellular.</span></div>
+    </div>
+
+    <!-- BREAKPOINTS -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 14px;color:#16221d;">Breakpoints</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:15px;">
+      <thead>
+        <tr style="text-align:left;border-bottom:2px solid #e1e8e2;color:#5a665f;">
+          <th style="padding:10px 12px;font-weight:600;">Name</th>
+          <th style="padding:10px 12px;font-weight:600;">Range</th>
+          <th style="padding:10px 12px;font-weight:600;">Container</th>
+          <th style="padding:10px 12px;font-weight:600;">Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #eef1ee;"><td style="padding:11px 12px;font-weight:600;">Base / Mobile</td><td style="padding:11px 12px;font-family:monospace;">0–599px</td><td style="padding:11px 12px;">100% − 40px</td><td style="padding:11px 12px;color:#43504a;">Single column, 20px side padding, stacked nav.</td></tr>
+        <tr style="border-bottom:1px solid #eef1ee;background:#fafbfa;"><td style="padding:11px 12px;font-weight:600;">Small</td><td style="padding:11px 12px;font-family:monospace;">600–899px</td><td style="padding:11px 12px;">100% − 56px</td><td style="padding:11px 12px;color:#43504a;">2-up card grids, 28px side padding.</td></tr>
+        <tr style="border-bottom:1px solid #eef1ee;"><td style="padding:11px 12px;font-weight:600;">Medium</td><td style="padding:11px 12px;font-family:monospace;">900–1199px</td><td style="padding:11px 12px;">100% − 64px</td><td style="padding:11px 12px;color:#43504a;">Full multi-column layouts, inline nav, 32px padding.</td></tr>
+        <tr><td style="padding:11px 12px;font-weight:600;">Large / Desktop</td><td style="padding:11px 12px;font-family:monospace;">≥1200px</td><td style="padding:11px 12px;">1180px fixed</td><td style="padding:11px 12px;color:#43504a;">Centered container, full hero split.</td></tr>
+      </tbody>
+    </table>
+
+    <!-- TYPE SCALE -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 14px;color:#16221d;">Typographic scale</h2>
+    <p style="font-size:15px;color:#43504a;margin:0 0 14px;">Headings use <strong>Bricolage Grotesque</strong>; body uses <strong>Hanken Grotesk</strong>. Sizes step up at the Medium breakpoint.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:15px;">
+      <thead>
+        <tr style="text-align:left;border-bottom:2px solid #e1e8e2;color:#5a665f;">
+          <th style="padding:10px 12px;font-weight:600;">Role</th>
+          <th style="padding:10px 12px;font-weight:600;">Mobile</th>
+          <th style="padding:10px 12px;font-weight:600;">Desktop</th>
+          <th style="padding:10px 12px;font-weight:600;">Weight / line-height</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #eef1ee;"><td style="padding:11px 12px;font-weight:600;">Hero H1</td><td style="padding:11px 12px;font-family:monospace;">32px</td><td style="padding:11px 12px;font-family:monospace;">56px</td><td style="padding:11px 12px;color:#43504a;">800 · 1.05</td></tr>
+        <tr style="border-bottom:1px solid #eef1ee;background:#fafbfa;"><td style="padding:11px 12px;font-weight:600;">Section H2</td><td style="padding:11px 12px;font-family:monospace;">26px</td><td style="padding:11px 12px;font-family:monospace;">40px</td><td style="padding:11px 12px;color:#43504a;">800 · 1.12</td></tr>
+        <tr style="border-bottom:1px solid #eef1ee;"><td style="padding:11px 12px;font-weight:600;">Card H3</td><td style="padding:11px 12px;font-family:monospace;">18px</td><td style="padding:11px 12px;font-family:monospace;">19px</td><td style="padding:11px 12px;color:#43504a;">700 · 1.25</td></tr>
+        <tr style="border-bottom:1px solid #eef1ee;background:#fafbfa;"><td style="padding:11px 12px;font-weight:600;">Lead paragraph</td><td style="padding:11px 12px;font-family:monospace;">17px</td><td style="padding:11px 12px;font-family:monospace;">19px</td><td style="padding:11px 12px;color:#43504a;">400 · 1.55</td></tr>
+        <tr style="border-bottom:1px solid #eef1ee;"><td style="padding:11px 12px;font-weight:600;">Body</td><td style="padding:11px 12px;font-family:monospace;">16px</td><td style="padding:11px 12px;font-family:monospace;">16px</td><td style="padding:11px 12px;color:#43504a;">400 · 1.6</td></tr>
+        <tr><td style="padding:11px 12px;font-weight:600;">Caption / label</td><td style="padding:11px 12px;font-family:monospace;">13px</td><td style="padding:11px 12px;font-family:monospace;">14px</td><td style="padding:11px 12px;color:#43504a;">500–700 · 1.4</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:14px;color:#5a665f;margin:12px 0 0;">Minimum body text on any screen is 16px to avoid mobile zoom-on-focus. Line length is capped at ~46em for readability.</p>
+
+    <!-- SPACING -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 14px;color:#16221d;">Spacing &amp; rhythm</h2>
+    <p style="font-size:15px;color:#43504a;margin:0 0 14px;">Built on a 4px base unit. Section vertical padding compresses on mobile.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;font-size:14.5px;color:#43504a;"><strong style="color:#16221d;">Spacing tokens</strong><br>4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96px</div>
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;font-size:14.5px;color:#43504a;"><strong style="color:#16221d;">Section padding</strong><br>Mobile 56px · Desktop 96px (vertical)</div>
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;font-size:14.5px;color:#43504a;"><strong style="color:#16221d;">Card padding</strong><br>Mobile 22px · Desktop 28–38px</div>
+      <div style="background:#f4f7f5;border:1px solid #e1e8e2;border-radius:12px;padding:18px 20px;font-size:14.5px;color:#43504a;"><strong style="color:#16221d;">Grid gap</strong><br>Mobile 16px · Desktop 24–36px</div>
+    </div>
+
+    <!-- TOUCH -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 14px;color:#16221d;">Touch &amp; interaction</h2>
+    <ul style="margin:0;padding-left:22px;color:#3c4a43;font-size:16px;line-height:1.85;">
+      <li>Minimum tap target <strong>44×44px</strong>; primary buttons are full-width on mobile with ≥48px height.</li>
+      <li>At least 8px of clear space between adjacent tappable elements.</li>
+      <li>Phone numbers are <span style="font-family:monospace;font-size:14px;">tel:</span> links; the header number stays one-tap reachable.</li>
+      <li>Focus states are visible (2px accent ring) for keyboard and switch users.</li>
+      <li>No hover-only actions — all functionality works on tap.</li>
+    </ul>
+
+    <!-- COMPONENT REFLOW -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 18px;color:#16221d;">How each section reflows</h2>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">Header / nav</strong><span style="font-size:15px;color:#43504a;">Inline links collapse to a hamburger menu below 900px. Wordmark + phone link stay visible; "Start your site" CTA becomes a full-width button inside the open menu.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">Hero</strong><span style="font-size:15px;color:#43504a;">Two-column split stacks: headline + CTAs first, then the "Get your site" form card below it full-width. H1 drops to 32px.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">Value pillars</strong><span style="font-size:15px;color:#43504a;">3-up row becomes a single stacked column; left dividers are removed in favor of vertical spacing.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">How it works</strong><span style="font-size:15px;color:#43504a;">4 step cards: 1-up on mobile, 2-up at Small, 4-up at Medium+.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">What you get</strong><span style="font-size:15px;color:#43504a;">6-item grid: 1-up → 2-up → 3-up. Outer panel padding drops from 56px to 24px.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">Cost comparison</strong><span style="font-size:15px;color:#43504a;">Two price cards stack vertically; the noprofits.org card stays second so it reads as the conclusion.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">Guides</strong><span style="font-size:15px;color:#43504a;">3 guide cards: 1-up → 2-up → 3-up. Covers keep a 16:9 ratio.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;border-bottom:1px solid #eef1ee;padding-bottom:14px;"><strong style="font-size:15px;">Contact form</strong><span style="font-size:15px;color:#43504a;">Intro column stacks above the form. Paired fields (email/phone) go full-width single-column on mobile.</span></div>
+      <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;align-items:start;"><strong style="font-size:15px;">Footer</strong><span style="font-size:15px;color:#43504a;">Brand block and link groups stack vertically; bottom legal row wraps.</span></div>
+    </div>
+
+    <!-- FORMS -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 14px;color:#16221d;">Forms on mobile</h2>
+    <ul style="margin:0;padding-left:22px;color:#3c4a43;font-size:16px;line-height:1.85;">
+      <li>Inputs are full-width, ≥48px tall, 16px text (prevents iOS zoom-on-focus).</li>
+      <li>Correct input types trigger the right keyboard: <span style="font-family:monospace;font-size:14px;">email</span>, <span style="font-family:monospace;font-size:14px;">tel</span>, <span style="font-family:monospace;font-size:14px;">text</span>.</li>
+      <li>Required fields (name, organization, email, phone) marked with an accent asterisk and native validation.</li>
+      <li>Submit button is full-width and fixed in tab order after the last field.</li>
+      <li>On submit, an inline success state replaces the form — no page reload, submission logged to Google Sheets + emailed.</li>
+    </ul>
+
+    <!-- IMAGERY + PERF -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;margin:46px 0 14px;color:#16221d;">Imagery, performance &amp; SEO</h2>
+    <ul style="margin:0;padding-left:22px;color:#3c4a43;font-size:16px;line-height:1.85;">
+      <li>Responsive images via Astro's image pipeline — <span style="font-family:monospace;font-size:14px;">srcset</span> + width/height to reserve space and avoid layout shift.</li>
+      <li>Hero and above-the-fold images eager-loaded; everything below lazy-loaded.</li>
+      <li>Fonts loaded with <span style="font-family:monospace;font-size:14px;">display=swap</span> and preconnect; text renders immediately.</li>
+      <li>Single semantic <span style="font-family:monospace;font-size:14px;">&lt;h1&gt;</span> per page, descriptive meta + Open Graph tags, sitemap, and fast static delivery for strong mobile SEO.</li>
+      <li>Target: Lighthouse mobile performance ≥90, no cumulative layout shift.</li>
+    </ul>
+
+    <p style="margin:46px 0 0;font-size:14px;color:#9aa39c;border-top:1px solid #eee;padding-top:18px;">noprofits.org · Mobile-first design spec · Free websites for non-profits across greater Seattle · hello@noprofits.org · 206-532-6395</p>
+  </article>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 940, &quot;height&quot;: 900 }
+}">
+class Component extends DCLogic {
+  printDoc = () => {
+    if (typeof window !== 'undefined') window.print();
+  };
+  renderVals() {
+    return { printDoc: this.printDoc };
+  }
+}
+</script>
+</body>
+</html>

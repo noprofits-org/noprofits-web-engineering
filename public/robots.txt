@@ -1,0 +1,7 @@
+# noprofits.org — public marketing site (indexable).
+# PRE-LAUNCH: to de-index before going live, replace "Allow: /" with
+# "Disallow: /" below AND uncomment the noindex meta in BaseLayout.astro.
+User-agent: *
+Allow: /
+
+Sitemap: https://noprofits.org/sitemap-index.xml

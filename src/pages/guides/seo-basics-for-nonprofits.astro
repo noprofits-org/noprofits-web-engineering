@@ -1,0 +1,284 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { EMAIL, SITE_NAME, SITE_URL } from '../../data/site.ts';
+
+const title = 'Get found on Google: SEO basics for non-profits — Guide | noprofits.org';
+const description =
+  'A plain-English, print-ready guide to search basics for non-profits: clear page purpose, honest titles and descriptions, your Google Business Profile, local relevance, and getting listed — no jargon, no false promises.';
+const path = '/guides/seo-basics-for-nonprofits/';
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Get found on Google: SEO basics for non-profits',
+  description,
+  url: new URL(path, SITE_URL).href,
+  publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  inLanguage: 'en',
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  ogType="article"
+  jsonLd={articleLd}
+>
+  <main id="main" class="np-guidepage">
+    <!-- Screen-only chrome (hidden in print / PDF). -->
+    <div class="np-guidebar np-noprint">
+      <div class="np-guidebar__inner">
+        <a href="/" class="np-guidebar__back">← Back to site</a>
+        <button type="button" class="np-guidebar__print" data-print-guide>Print / Save as PDF</button>
+      </div>
+    </div>
+
+    <article class="np-article">
+      <div class="np-article__head">
+        <span class="np-article__mark" aria-hidden="true">n</span>
+        <span class="np-article__word">noprofits.org</span>
+        <span class="np-article__tag">Free guide · Visibility</span>
+      </div>
+
+      <h1 class="np-article__h1">Get found on Google: SEO basics for non-profits</h1>
+      <p class="np-article__lead">
+        SEO ("search engine optimization") just means helping the right people find you on Google.
+        You don't need tricks or a budget — you need a clear site that honestly says who you are,
+        what you do, and where you serve. This guide covers the handful of basics that matter most.
+      </p>
+
+      <h2 class="np-article__h2">Start with one clear purpose per page</h2>
+      <p class="np-article__p">
+        Google rewards pages that answer one question well. Give each page a single job — your
+        mission, your programs, how to volunteer, how to donate — instead of cramming everything
+        onto one page. A visitor (and Google) should know what a page is about within seconds.
+      </p>
+
+      <h2 class="np-article__h2">The steps</h2>
+      <div class="np-steps">
+        <div class="np-steprow">
+          <span class="np-steprow__num">1</span>
+          <div>
+            <h3 class="np-steprow__h">Write an honest title for every page</h3>
+            <p class="np-steprow__p">The page title is the blue link people see in Google. Make it specific and true — "Free meals for families in South Seattle" beats "Welcome." Keep it short and lead with what you do.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">2</span>
+          <div>
+            <h3 class="np-steprow__h">Add a one-sentence description</h3>
+            <p class="np-steprow__p">The description is the gray text under the title in search results. Use one plain sentence that tells someone why to click. Don't keyword-stuff — write it for a person.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">3</span>
+          <div>
+            <h3 class="np-steprow__h">Claim your Google Business Profile</h3>
+            <p class="np-steprow__p">A free Google Business Profile puts your org on Google Maps and in the local results box. Add your name, area served, hours, phone, and a link to your site. For many non-profits this is the single biggest visibility win.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">4</span>
+          <div>
+            <h3 class="np-steprow__h">Be clear about where you serve</h3>
+            <p class="np-steprow__p">Local relevance matters. Name your city, neighborhoods, and region in plain language on the page — not hidden in a corner. People search "near me," and Google needs to know where "near" is for you.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">5</span>
+          <div>
+            <h3 class="np-steprow__h">Get listed where your supporters look</h3>
+            <p class="np-steprow__p">Ask partner organizations, local directories, and community pages to link to your site. A few trusted links from real local sources help Google trust you, too. Quality matters far more than quantity.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="np-checklist">
+        <h3 class="np-checklist__h">Quick checklist</h3>
+        <ul class="np-checklist__ul">
+          <li>One clear purpose per page</li>
+          <li>Honest, specific page titles</li>
+          <li>A one-sentence description on each page</li>
+          <li>Google Business Profile claimed and filled in</li>
+          <li>Your city and service area named in plain words</li>
+        </ul>
+      </div>
+
+      <p class="np-article__foot">
+        noprofits.org · Free websites for non-profits across greater Seattle · {EMAIL}
+      </p>
+    </article>
+  </main>
+
+  <style>
+    .np-guidepage { background: #e9ece8; min-height: 100vh; padding: 0 0 48px; }
+
+    /* Sticky screen chrome */
+    .np-guidebar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--ink);
+      color: #f4f1ea;
+    }
+    .np-guidebar__inner {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .np-guidebar__back {
+      background: none;
+      border: none;
+      color: #cdd4cd;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+    .np-guidebar__print {
+      background: var(--mint);
+      border: none;
+      color: #143f33;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 11px 18px;
+      border-radius: 9px;
+      min-height: 44px;
+    }
+
+    /* The printable article sheet */
+    .np-article {
+      max-width: 820px;
+      margin: 24px auto;
+      background: #fff;
+      box-shadow: 0 20px 50px -34px rgba(20, 40, 33, 0.4);
+      border-radius: 6px;
+      padding: 36px 24px;
+    }
+    .np-article__head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 18px;
+    }
+    .np-article__mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .np-article__word {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--ink);
+    }
+    .np-article__tag { margin-left: auto; font-family: monospace; font-size: 12px; color: var(--faint); }
+
+    .np-article__h1 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 28px 0 0;
+    }
+    .np-article__lead { font-size: 17px; color: var(--slate); margin: 18px 0 0; line-height: 1.6; }
+    .np-article__h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      margin: 36px 0 14px;
+      color: var(--ink);
+    }
+    .np-article__p { font-size: 16px; color: #3c4a43; margin: 0 0 12px; line-height: 1.7; }
+    .np-article__ul { margin: 0; padding-left: 22px; color: #3c4a43; font-size: 16px; line-height: 1.8; }
+
+    .np-steps { display: flex; flex-direction: column; gap: 22px; }
+    .np-steprow { display: flex; gap: 16px; }
+    .np-steprow__num {
+      flex: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--sky-tint);
+      color: var(--accent-deep);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .np-steprow__h {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      margin: 4px 0 5px;
+    }
+    .np-steprow__p { margin: 0; font-size: 16px; color: #3c4a43; line-height: 1.7; }
+
+    .np-checklist {
+      margin-top: 36px;
+      background: #eef3f0;
+      border: 1px solid #dde6e0;
+      border-radius: 12px;
+      padding: 22px 24px;
+    }
+    .np-checklist__h {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      margin: 0 0 10px;
+    }
+    .np-checklist__ul { margin: 0; padding-left: 22px; color: #3c4a43; font-size: 15px; line-height: 1.9; }
+
+    .np-article__foot {
+      margin: 36px 0 0;
+      font-size: 14px;
+      color: var(--faint);
+      border-top: 1px solid #eee;
+      padding-top: 18px;
+    }
+
+    @media (min-width: 700px) {
+      .np-article { margin: 34px auto; padding: 72px 80px; }
+      .np-article__h1 { font-size: 38px; }
+      .np-article__lead { font-size: 18px; }
+    }
+
+    /* Print: drop the sheet styling so it fills the page cleanly. */
+    @media print {
+      .np-guidepage { background: #fff !important; padding: 0 !important; }
+      .np-article {
+        box-shadow: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        max-width: none;
+        padding: 32px 40px !important;
+      }
+    }
+  </style>
+
+  <script>
+    document.querySelector('[data-print-guide]')?.addEventListener('click', () => window.print());
+  </script>
+</BaseLayout>

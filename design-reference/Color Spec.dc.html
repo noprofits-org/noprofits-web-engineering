@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  @media print { .np-noprint { display:none !important; } body { background:#fff !important; } .np-page { box-shadow:none !important; margin:0 !important; border-radius:0 !important; padding:32px 40px !important; } }
+</style>
+</helmet>
+<div style="font-family:'Hanken Grotesk',system-ui,sans-serif;color:#16221d;background:#e9ece8;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;padding:0 0 50px;">
+
+  <div class="np-noprint" style="position:sticky;top:0;z-index:40;background:#16221d;color:#f4f1ea;">
+    <div style="max-width:880px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <span style="display:flex;align-items:center;gap:9px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;">
+        <span style="width:24px;height:24px;border-radius:50%;background:#2f7da3;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;">n</span>
+        noprofits.org — Color Spec
+      </span>
+      <button onClick="{{ printDoc }}" style="background:#9fd0bf;border:none;color:#143f33;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:9px 18px;border-radius:9px;">Print / Save as PDF</button>
+    </div>
+  </div>
+
+  <article class="np-page" style="max-width:880px;margin:28px auto;background:#fff;box-shadow:0 20px 50px -34px rgba(20,40,33,0.4);border-radius:6px;padding:44px 52px;">
+
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid #2f7da3;padding-bottom:14px;">
+      <span style="width:24px;height:24px;border-radius:50%;background:#2f7da3;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:13px;">n</span>
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#16221d;">noprofits.org</span>
+      <span style="margin-left:auto;font-family:monospace;font-size:11.5px;color:#9aa39c;">Color palette · Sky · sRGB</span>
+    </div>
+
+    <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-0.02em;margin:20px 0 6px;">Color Palette</h1>
+    <p style="font-size:14px;color:#43504a;margin:0;max-width:48em;">The Sky variation. Eyedrop any swatch or type the HEX / RGB into a swatch. Also available as <strong>noprofits-color-palette.svg</strong> for Illustrator.</p>
+
+    <!-- PRIMARY -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;margin:24px 0 10px;color:#16221d;">Primary — Sky</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#2f7da3;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Sky</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#2F7DA3</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">47 · 125 · 163</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#1c5572;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Sky Deep</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#1C5572</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">28 · 85 · 114</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#5b9fc0;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Sky Mid</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#5B9FC0</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">91 · 159 · 192</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#cfe6ef;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Sky Soft</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#CFE6EF</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">207 · 230 · 239</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#eaf3f7;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Sky Tint</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#EAF3F7</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">234 · 243 · 247</div></div></div>
+    </div>
+
+    <!-- SUPPORTING -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;margin:22px 0 10px;color:#16221d;">Supporting — Forest green</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#1d5a48;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Forest</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#1D5A48</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">29 · 90 · 72</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#143f33;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Forest Deep</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#143F33</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">20 · 63 · 51</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#9fd0bf;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Mint</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#9FD0BF</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">159 · 208 · 191</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#c8632e;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Terracotta</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#C8632E</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">200 · 99 · 46</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#fafbfa;"><span style="font-family:monospace;font-size:10px;color:#9aa39c;text-align:center;padding:0 6px;">accent only —<br>marks &amp; details</span></div>
+    </div>
+
+    <!-- NEUTRALS -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;margin:22px 0 10px;color:#16221d;">Warm neutrals</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#f7f4ee;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Cream</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#F7F4EE</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">247 · 244 · 238</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#fbfaf6;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Off-white</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#FBFAF6</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">251 · 250 · 246</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#ffffff;border-bottom:1px solid #ece6da;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">White</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#FFFFFF</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">255 · 255 · 255</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#ece6da;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Border</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#ECE6DA</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">236 · 230 · 218</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#dcd5c8;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Border Strong</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#DCD5C8</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">220 · 213 · 200</div></div></div>
+    </div>
+
+    <!-- INK -->
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;margin:22px 0 10px;color:#16221d;">Ink &amp; text</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#16221d;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Ink</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#16221D</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">22 · 34 · 29</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#43504a;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Slate</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#43504A</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">67 · 80 · 74</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#5a665f;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Muted</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#5A665F</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">90 · 102 · 95</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;"><div style="height:56px;background:#9aa39c;"></div><div style="padding:7px 9px;"><div style="font-weight:700;font-size:12.5px;">Faint</div><div style="font-family:monospace;font-size:11.5px;color:#43504a;">#9AA39C</div><div style="font-family:monospace;font-size:10px;color:#9aa39c;">154 · 163 · 156</div></div></div>
+      <div style="border:1px solid #ece6da;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#fafbfa;"><span style="font-family:monospace;font-size:10px;color:#9aa39c;text-align:center;padding:0 6px;">Ink on Cream =<br>body text</span></div>
+    </div>
+
+    <p style="margin:26px 0 0;font-size:12px;color:#9aa39c;border-top:1px solid #eee;padding-top:14px;">noprofits.org · Sky palette · sRGB · hello@noprofits.org · 206-532-6395</p>
+  </article>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 880, &quot;height&quot;: 760 }
+}">
+class Component extends DCLogic {
+  printDoc = () => { if (typeof window !== 'undefined') window.print(); };
+  renderVals() { return { printDoc: this.printDoc }; }
+}
+</script>
+</body>
+</html>

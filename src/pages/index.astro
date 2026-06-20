@@ -1,0 +1,590 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import InquiryForm from '../components/InquiryForm.astro';
+import {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  AREA_SERVED,
+} from '../data/site.ts';
+
+const title = `${SITE_NAME} — Free professional websites for non-profits`;
+
+// Service schema describing the core offering for the homepage.
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Free and low-cost websites for non-profits',
+  serviceType: 'Website design, build, and hosting for non-profit organizations',
+  description: SITE_DESCRIPTION,
+  areaServed: AREA_SERVED,
+  provider: {
+    '@type': 'Organization',
+    name: SITE_NAME,
+    url: SITE_URL,
+  },
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    description: 'Professional website hosted free on your existing Google Workspace.',
+  },
+};
+---
+
+<BaseLayout title={title} description={SITE_DESCRIPTION} path="/" jsonLd={serviceLd}>
+  <Header />
+
+  <main id="main">
+    <!-- ============ HERO ============ -->
+    <section id="top" class="np-hero">
+      <div class="np-container np-hero__grid">
+        <div class="np-hero__copy">
+          <span class="np-badge">
+            <span class="np-dot" aria-hidden="true"></span>
+            For non-profits across greater Seattle
+          </span>
+          <h1 class="np-h1">
+            A professional website for your mission — at little to no cost.
+          </h1>
+          <p class="np-h1-sub">
+            We design and build fast, beautiful sites for non-profits — then host them
+            <strong>free on the Google Workspace you already have</strong>. No monthly
+            site bill. No lock-in. You own everything.
+          </p>
+          <div class="np-hero__ctas">
+            <a href="#contact" class="np-btn np-btn-primary">Get your free site</a>
+            <a href="#how" class="np-btn np-btn-secondary">See how it works</a>
+          </div>
+          <div class="np-trust">
+            <span class="np-trust__item"><span class="np-trust__dot" aria-hidden="true"></span>$0 hosting</span>
+            <span class="np-trust__item"><span class="np-trust__dot" aria-hidden="true"></span>Strong SEO built in</span>
+            <span class="np-trust__item"><span class="np-trust__dot" aria-hidden="true"></span>Forms that email you</span>
+          </div>
+        </div>
+
+        <div class="np-hero__card">
+          <div class="np-formcard">
+            <div class="np-formcard__head">
+              <h2 class="np-formcard__title">Get your site — right now.</h2>
+              <p class="np-formcard__sub">Four quick details and we'll start building. Free to begin.</p>
+            </div>
+            <div class="np-formcard__body">
+              <InquiryForm variant="hero" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VALUE PILLARS ============ -->
+    <section class="np-pillars">
+      <div class="np-container np-pillars__grid">
+        <div class="np-pillar">
+          <div class="np-pillar__num">$0</div>
+          <h3 class="np-pillar__h">No monthly hosting bill</h3>
+          <p class="np-pillar__p">Your site lives on the Google Workspace your org already runs. Nothing new to pay for.</p>
+        </div>
+        <div class="np-pillar np-pillar--div">
+          <div class="np-pillar__num">100%</div>
+          <h3 class="np-pillar__h">Yours to keep</h3>
+          <p class="np-pillar__p">You own the domain, the content, and the code. No platform holding your site hostage.</p>
+        </div>
+        <div class="np-pillar np-pillar--div">
+          <div class="np-pillar__num">Built&nbsp;for&nbsp;you</div>
+          <h3 class="np-pillar__h">We get non-profits</h3>
+          <p class="np-pillar__p">Lean budgets, volunteer teams, real missions. We build to fit how you actually work.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section id="how" class="np-section">
+      <div class="np-container">
+        <p class="np-eyebrow">How it works</p>
+        <h2 class="np-h2 np-how__h2">From conversation to launch, usually in a couple of weeks.</h2>
+        <div class="np-grid np-grid--4 np-how__grid">
+          <div class="np-step">
+            <div class="np-step__num">1</div>
+            <h3 class="np-h3 np-step__h">Tell us about your mission</h3>
+            <p class="np-step__p">A short conversation about what your org does and who you need to reach.</p>
+          </div>
+          <div class="np-step">
+            <div class="np-step__num">2</div>
+            <h3 class="np-h3 np-step__h">We design &amp; build</h3>
+            <p class="np-step__p">A clean, fast, mobile-ready site with the pages and forms your org needs.</p>
+          </div>
+          <div class="np-step">
+            <div class="np-step__num">3</div>
+            <h3 class="np-h3 np-step__h">Connect Google Workspace</h3>
+            <p class="np-step__p">We wire it to your account so hosting and form emails are free and built in.</p>
+          </div>
+          <div class="np-step np-step--accent">
+            <div class="np-step__num np-step__num--accent">4</div>
+            <h3 class="np-h3 np-step__h np-step__h--accent">Launch &amp; own it</h3>
+            <p class="np-step__p np-step__p--accent">You go live with a site that's yours — and we leave you the keys.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FEATURES ============ -->
+    <section id="features" class="np-features">
+      <div class="np-container">
+        <div class="np-panel">
+          <p class="np-eyebrow">What you get</p>
+          <h2 class="np-h2 np-features__h2">Everything a paid site builder gives you — without the monthly bill.</h2>
+          <div class="np-grid np-grid--3 np-features__grid">
+            <div class="np-feature">
+              <span class="np-feature__mark np-feature__mark--accent" aria-hidden="true"></span>
+              <h3 class="np-h3 np-feature__h">Found on Google</h3>
+              <p class="np-feature__p">Strong technical SEO baked in — clean markup, sitemaps, fast loads — so supporters can find you.</p>
+            </div>
+            <div class="np-feature">
+              <span class="np-feature__mark np-feature__mark--circle" aria-hidden="true"></span>
+              <h3 class="np-h3 np-feature__h">Great on every screen</h3>
+              <p class="np-feature__p">Designed mobile-first, polished on desktop. It looks right whether someone's on a phone or a laptop.</p>
+            </div>
+            <div class="np-feature">
+              <span class="np-feature__mark np-feature__mark--diamond" aria-hidden="true"></span>
+              <h3 class="np-h3 np-feature__h">Forms that email you</h3>
+              <p class="np-feature__p">Every submission lands in a Google Sheet and emails your team instantly. No database, no add-on fees.</p>
+            </div>
+            <div class="np-feature">
+              <span class="np-feature__mark np-feature__mark--accent" aria-hidden="true"></span>
+              <h3 class="np-h3 np-feature__h">Printable forms &amp; flyers</h3>
+              <p class="np-feature__p">Host intake forms, volunteer sign-ups, event flyers, and registration sheets right on your site — anyone can print a clean copy on demand. No copier runs, never out of date.</p>
+            </div>
+            <div class="np-feature">
+              <span class="np-feature__mark np-feature__mark--circle" aria-hidden="true"></span>
+              <h3 class="np-h3 np-feature__h">Fast, secure, always on</h3>
+              <p class="np-feature__p">Served as static files on Google's infrastructure — quick to load and nothing to keep patched.</p>
+            </div>
+            <div class="np-feature">
+              <span class="np-feature__mark np-feature__mark--diamond" aria-hidden="true"></span>
+              <h3 class="np-h3 np-feature__h">You own it all</h3>
+              <p class="np-feature__p">Domain, content, and code stay with your organization. Walk away from us anytime, keep your site.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COST COMPARISON ============ -->
+    <section class="np-compare">
+      <div class="np-container">
+        <div class="np-grid np-grid--2 np-compare__grid">
+          <div class="np-cost np-cost--usual">
+            <p class="np-cost__label">The usual route</p>
+            <div class="np-cost__price">$200–$500<span class="np-cost__per">/year</span></div>
+            <p class="np-cost__sub">A subscription site builder, paid every year, forever.</p>
+            <ul class="np-cost__list">
+              <li><span class="np-cost__minus">—</span>Recurring monthly bill</li>
+              <li><span class="np-cost__minus">—</span>Locked into one platform</li>
+              <li><span class="np-cost__minus">—</span>Templates everyone else uses</li>
+              <li><span class="np-cost__minus">—</span>Stop paying, lose your site</li>
+            </ul>
+          </div>
+          <div class="np-cost np-cost--ours">
+            <p class="np-cost__label np-cost__label--ours">With noprofits.org</p>
+            <div class="np-cost__price np-cost__price--ours">$0<span class="np-cost__per np-cost__per--ours">/year hosting</span></div>
+            <p class="np-cost__sub np-cost__sub--ours">A custom site on the Workspace you already pay nothing extra for.</p>
+            <ul class="np-cost__list np-cost__list--ours">
+              <li><span class="np-cost__check">✓</span>No hosting bill, ever</li>
+              <li><span class="np-cost__check">✓</span>Designed around your mission</li>
+              <li><span class="np-cost__check">✓</span>Forms, SEO, PDF guides included</li>
+              <li><span class="np-cost__check">✓</span>Yours to keep — code and all</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GUIDES ============ -->
+    <section id="guides" class="np-guides np-section">
+      <div class="np-container">
+        <div class="np-guides__head">
+          <div>
+            <p class="np-eyebrow">Free guides</p>
+            <h2 class="np-h2 np-guides__h2">Plain-English guides for running your site.</h2>
+          </div>
+          <p class="np-guides__intro">Written for volunteers and board members — no jargon. Read online or print a clean PDF, the same way your site can host printable intake forms and flyers for the public.</p>
+        </div>
+        <div class="np-grid np-grid--3 np-guides__grid">
+          <a href="/guides/launch-free-on-google-workspace/" class="np-guidecard">
+            <div class="np-guidecard__cover" aria-hidden="true"><span>guide cover</span></div>
+            <div class="np-guidecard__body">
+              <span class="np-guidecard__kicker">SETUP</span>
+              <h3 class="np-guidecard__h">Launch your site free on Google Workspace</h3>
+              <p class="np-guidecard__p">The full path from domain to live site, with no monthly hosting cost.</p>
+              <span class="np-guidecard__cta">Read guide →</span>
+            </div>
+          </a>
+          <a href="/guides/seo-basics-for-nonprofits/" class="np-guidecard">
+            <div class="np-guidecard__cover" aria-hidden="true"><span>guide cover</span></div>
+            <div class="np-guidecard__body">
+              <span class="np-guidecard__kicker">VISIBILITY</span>
+              <h3 class="np-guidecard__h">Get found on Google: SEO basics</h3>
+              <p class="np-guidecard__p">Simple steps so the people who need your services can actually find you.</p>
+              <span class="np-guidecard__cta">Read guide →</span>
+            </div>
+          </a>
+          <a href="/guides/forms-that-email-you/" class="np-guidecard">
+            <div class="np-guidecard__cover" aria-hidden="true"><span>guide cover</span></div>
+            <div class="np-guidecard__body">
+              <span class="np-guidecard__kicker">FORMS</span>
+              <h3 class="np-guidecard__h">Collect inquiries with a form that emails you</h3>
+              <p class="np-guidecard__p">Route every contact form into a Google Sheet and straight to your inbox.</p>
+              <span class="np-guidecard__cta">Read guide →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="np-section">
+      <div class="np-container np-contact__grid">
+        <div class="np-contact__intro">
+          <p class="np-eyebrow">Start your site</p>
+          <h2 class="np-h2 np-contact__h2">Tell us about your organization.</h2>
+          <p class="np-lead np-contact__lead">Share a few details and we'll be in touch about building your free site. No commitment, no sales pressure.</p>
+          <div class="np-next">
+            <p><strong>What happens next:</strong> your submission is saved to a Google Sheet and emailed to our team — the same simple, free setup we'll build into your site.</p>
+          </div>
+          <p class="np-contact__area">Serving non-profits across Seattle, the Eastside, and the greater Puget Sound region.</p>
+        </div>
+        <div class="np-contact__formwrap">
+          <InquiryForm variant="contact" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* ============ HERO ============ */
+  .np-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #eaf3f7 0%, #f7f4ee 100%);
+  }
+  .np-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 36px;
+    align-items: center;
+    padding-top: 48px;
+    padding-bottom: 56px;
+  }
+  .np-hero__copy { animation: npFadeUp 0.7s ease both; }
+  .np-hero__card { animation: npFadeUp 0.7s ease 0.1s both; }
+  .np-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #d6e4ea;
+    color: var(--accent-deep);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 999px;
+  }
+  .np-badge .np-dot { background: var(--accent); width: 7px; height: 7px; border-radius: 50%; }
+  .np-h1-sub {
+    font-size: 17px;
+    color: var(--slate);
+    margin: 22px 0 0;
+    max-width: 30em;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+  .np-h1-sub strong { color: var(--ink); }
+  .np-hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .np-trust {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    flex-wrap: wrap;
+  }
+  .np-trust__item { display: flex; align-items: center; gap: 8px; }
+  .np-trust__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sky-mid); }
+
+  .np-formcard {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 30px 60px -30px rgba(20, 40, 33, 0.35);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .np-formcard__head { background: var(--accent-deep); padding: 22px 24px; }
+  .np-formcard__title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .np-formcard__sub { margin: 6px 0 0; color: #cfe6dc; font-size: 14px; }
+  .np-formcard__body { padding: 24px; }
+
+  @media (min-width: 600px) {
+    .np-hero__grid { padding-top: 64px; padding-bottom: 72px; }
+    .np-formcard__head { padding: 22px 28px; }
+    .np-formcard__title { font-size: 24px; }
+    .np-formcard__body { padding: 26px 28px 30px; }
+  }
+  @media (min-width: 1200px) {
+    .np-hero__grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 56px;
+      padding-top: 84px;
+      padding-bottom: 92px;
+    }
+  }
+
+  /* ============ VALUE PILLARS ============ */
+  .np-pillars { background: var(--ink); color: #f4f1ea; }
+  .np-pillars__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .np-pillar__num {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    color: var(--mint);
+  }
+  .np-pillar__h {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 10px 0 6px;
+  }
+  .np-pillar__p { margin: 0; color: #b6bdb6; font-size: 15px; }
+  @media (min-width: 900px) {
+    .np-pillars__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      padding-top: 56px;
+      padding-bottom: 56px;
+    }
+    /* Left dividers only appear once side-by-side. */
+    .np-pillar--div { border-left: 1px solid #2c3a32; padding-left: 40px; }
+  }
+
+  /* ============ HOW IT WORKS ============ */
+  .np-how__h2 { max-width: 16em; }
+  .np-how__grid { margin-top: 40px; }
+  .np-step {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 22px;
+  }
+  .np-step--accent {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #eef6f2;
+  }
+  .np-step__num {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: var(--sky-tint);
+    color: var(--accent-deep);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .np-step__num--accent { background: rgba(255, 255, 255, 0.16); color: #fff; }
+  .np-step__h { margin: 18px 0 8px; }
+  .np-step__h--accent { color: #fff; }
+  .np-step__p { margin: 0; color: var(--muted); font-size: 15px; }
+  .np-step__p--accent { color: #cfe6dc; }
+  @media (min-width: 900px) {
+    .np-how__grid { margin-top: 48px; }
+    .np-step { padding: 28px 26px; }
+  }
+
+  /* ============ FEATURES ============ */
+  .np-features { padding-bottom: 56px; }
+  .np-panel {
+    background: var(--offwhite);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+  }
+  .np-features__h2 { max-width: 14em; }
+  .np-features__grid { margin-top: 32px; gap: 24px; }
+  .np-feature__mark { display: block; width: 14px; height: 14px; }
+  .np-feature__mark--accent { border-radius: 4px; background: var(--accent); }
+  .np-feature__mark--circle { border-radius: 50%; background: var(--sky-mid); }
+  .np-feature__mark--diamond { border-radius: 4px; transform: rotate(45deg); background: var(--terracotta); }
+  .np-feature__h { margin: 14px 0 6px; }
+  .np-feature__p { margin: 0; color: var(--muted); font-size: 15px; }
+  @media (min-width: 900px) {
+    .np-features { padding-bottom: 96px; }
+    .np-panel { padding: 56px; }
+    .np-features__grid { margin-top: 46px; gap: 28px 36px; }
+  }
+
+  /* ============ COST COMPARISON ============ */
+  .np-compare { padding-bottom: 56px; }
+  .np-compare__grid { align-items: stretch; }
+  .np-cost { border-radius: 20px; padding: 32px; }
+  .np-cost--usual { background: #fff; border: 1px solid var(--border); }
+  .np-cost--ours { background: var(--accent-deep); color: #eef6f2; position: relative; overflow: hidden; }
+  .np-cost__label {
+    margin: 0;
+    /* Lifted from #8a938c (~3.0:1) to --muted (~5.9:1 on white) for AA. */
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .np-cost__label--ours { color: var(--mint); }
+  .np-cost__price {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 38px;
+    margin: 14px 0 4px;
+    color: var(--ink);
+  }
+  .np-cost__price--ours { color: #fff; }
+  .np-cost__per { font-size: 18px; font-weight: 600; color: var(--muted); }
+  .np-cost__per--ours { color: var(--mint); }
+  .np-cost__sub { margin: 0 0 20px; color: var(--muted); font-size: 15px; }
+  .np-cost__sub--ours { color: #cfe6dc; }
+  .np-cost__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .np-cost__list--ours { color: #dcefe6; }
+  .np-cost__list li { display: flex; gap: 11px; }
+  .np-cost__minus { color: #bf8a6a; font-weight: 700; }
+  .np-cost__check { color: var(--mint); font-weight: 700; }
+  @media (min-width: 900px) {
+    .np-compare { padding-bottom: 96px; }
+    .np-cost { padding: 38px; }
+    .np-cost__price { font-size: 42px; }
+  }
+
+  /* ============ GUIDES ============ */
+  .np-guides {
+    background: #eef3f0;
+    border-top: 1px solid #e1e8e2;
+    border-bottom: 1px solid #e1e8e2;
+  }
+  .np-guides__head {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .np-guides__h2 { max-width: 15em; }
+  .np-guides__intro { margin: 0; color: var(--muted); font-size: 15px; max-width: 24em; }
+  .np-guides__grid { margin-top: 36px; }
+  .np-guidecard {
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    border: 1px solid #dde6e0;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .np-guidecard:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -22px rgba(20, 40, 33, 0.4); }
+  .np-guidecard__cover {
+    aspect-ratio: 16 / 9;
+    background: repeating-linear-gradient(135deg, #e4eef0, #e4eef0 11px, #dae8ea 11px, #dae8ea 22px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .np-guidecard__cover span { font-family: monospace; font-size: 11px; color: var(--muted); }
+  .np-guidecard__body { padding: 22px 22px 24px; }
+  .np-guidecard__kicker { font-family: monospace; font-size: 12px; color: var(--accent-deep); }
+  .np-guidecard__h {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    margin: 8px 0 6px;
+    line-height: 1.2;
+  }
+  .np-guidecard__p { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+  .np-guidecard__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  @media (min-width: 900px) {
+    .np-guides__head { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 24px; }
+    .np-guides__grid { margin-top: 44px; }
+  }
+
+  /* ============ CONTACT ============ */
+  .np-contact__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+  .np-contact__h2 { margin-bottom: 16px; }
+  .np-contact__lead { margin: 0 0 24px; color: var(--slate); }
+  .np-next {
+    background: #eef3f0;
+    border: 1px solid #dde6e0;
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .np-next p { margin: 0; color: #3c4a43; font-size: 14px; }
+  .np-contact__area { margin: 22px 0 0; color: var(--muted); font-size: 14px; }
+  .np-contact__formwrap {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 50px -34px rgba(20, 40, 33, 0.4);
+  }
+  @media (min-width: 600px) {
+    .np-contact__formwrap { padding: 32px; }
+  }
+  @media (min-width: 900px) {
+    .np-contact__grid { grid-template-columns: 0.85fr 1.15fr; gap: 56px; }
+    .np-contact__formwrap { padding: 38px; }
+  }
+</style>

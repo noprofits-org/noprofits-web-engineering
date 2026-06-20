@@ -1,0 +1,59 @@
+name: Deploy to Firebase Hosting
+
+# Deploys the built site to the `noprofits-web` Firebase Hosting project on
+# every push to main (i.e. after a gated PR merges) and on manual dispatch.
+#
+# Auth = keyless Workload Identity Federation (no service-account JSON key,
+# nothing secret committed) — mirrors the proven gwc-platform / gantt pattern.
+#
+# ── ONE-TIME ENABLEMENT before the first real deploy (Google side, on noprofits-web) ──
+#   1. Enable APIs:  firebasehosting.googleapis.com, iamcredentials.googleapis.com
+#      (iamcredentials is required for WIF→SA impersonation or firebase-tools
+#       fails with a misleading "have you run firebase login?")
+#   2. Create a deploy service account with roles/firebasehosting.admin.
+#   3. Create a WIF pool+provider bound by attribute.repository to
+#      noprofits-org/noprofits-web-engineering only.
+#   4. Grant the repo principalSet roles/iam.workloadIdentityUser on the SA.
+#   5. Set repo VARIABLES (Settings ▸ Secrets and variables ▸ Actions ▸ Variables):
+#         GCP_WIF_PROVIDER = projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
+#         GCP_DEPLOY_SA    = <sa>@noprofits-web.iam.gserviceaccount.com
+# These are non-secret identifiers; security comes from the pool's repo binding.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write   # required for WIF
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SA }}
+          export_environment_variables: true
+
+      - run: npm install -g firebase-tools
+
+      - name: Deploy
+        # firebase-tools reads ADC from the auth step's credentials file and
+        # mints its own firebase-scoped token.
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+        run: firebase deploy --only hosting --project noprofits-web --non-interactive

@@ -1,0 +1,205 @@
+---
+import { PHONE_DISPLAY, PHONE_TEL, FORM_ENDPOINT, isRealEndpoint } from '../data/site.ts';
+
+interface Props {
+  /** "hero" = compact 4-field card form; "contact" = full form with address/message. */
+  variant: 'hero' | 'contact';
+}
+
+const { variant } = Astro.props;
+const isHero = variant === 'hero';
+
+// Unique id namespace so the two form instances never collide.
+const ns = isHero ? 'hero' : 'contact';
+const id = (field: string) => `${ns}-${field}`;
+---
+
+<div class="np-form-wrap" data-form-root>
+  <form
+    class="np-form"
+    data-np-form
+    data-endpoint={FORM_ENDPOINT}
+    data-real-endpoint={String(isRealEndpoint)}
+  >
+    {/* Honeypot — visually hidden, off-screen, not tabbable, not announced.
+        A future Apps Script silently drops any submission where this is filled. */}
+    <div class="np-honeypot" aria-hidden="true">
+      <label>
+        Company
+        <input type="text" name="company" tabindex="-1" autocomplete="off" />
+      </label>
+    </div>
+
+    {isHero ? (
+      <>
+        <label class="np-field" for={id('name')}>
+          <span class="np-label">Contact name <span class="np-req">*</span></span>
+          <input class="np-input" id={id('name')} name="name" type="text" required placeholder="Jordan Rivera" autocomplete="name" />
+        </label>
+        <label class="np-field" for={id('org')}>
+          <span class="np-label">Organization name <span class="np-req">*</span></span>
+          <input class="np-input" id={id('org')} name="organization" type="text" required placeholder="Cascade Food Coalition" autocomplete="organization" />
+        </label>
+        <div class="np-form__pair">
+          <label class="np-field" for={id('email')}>
+            <span class="np-label">Email <span class="np-req">*</span></span>
+            <input class="np-input" id={id('email')} name="email" type="email" required placeholder="you@yourorg.org" autocomplete="email" />
+          </label>
+          <label class="np-field" for={id('phone')}>
+            <span class="np-label">Phone <span class="np-req">*</span></span>
+            <input class="np-input" id={id('phone')} name="phone" type="tel" required placeholder="(206) 555-0142" autocomplete="tel" />
+          </label>
+        </div>
+        <button type="submit" class="np-btn np-btn-primary np-form__submit">Start my free site</button>
+        <p class="np-form__note">Or call <a href={`tel:${PHONE_TEL}`} class="np-form__call">{PHONE_DISPLAY}</a></p>
+      </>
+    ) : (
+      <>
+        <div class="np-form__pair">
+          <label class="np-field" for={id('name')}>
+            <span class="np-label">Contact name <span class="np-req">*</span></span>
+            <input class="np-input" id={id('name')} name="name" type="text" required placeholder="Jordan Rivera" autocomplete="name" />
+          </label>
+          <label class="np-field" for={id('org')}>
+            <span class="np-label">Organization name <span class="np-req">*</span></span>
+            <input class="np-input" id={id('org')} name="organization" type="text" required placeholder="Cascade Food Coalition" autocomplete="organization" />
+          </label>
+          <label class="np-field" for={id('email')}>
+            <span class="np-label">Email <span class="np-req">*</span></span>
+            <input class="np-input" id={id('email')} name="email" type="email" required placeholder="you@yourorg.org" autocomplete="email" />
+          </label>
+          <label class="np-field" for={id('phone')}>
+            <span class="np-label">Phone <span class="np-req">*</span></span>
+            <input class="np-input" id={id('phone')} name="phone" type="tel" required placeholder="(206) 555-0142" autocomplete="tel" />
+          </label>
+        </div>
+        <label class="np-field" for={id('address')}>
+          <span class="np-label">Physical address <span class="np-optional">(optional)</span></span>
+          <input class="np-input" id={id('address')} name="address" type="text" placeholder="123 Pike St, Seattle, WA 98101" autocomplete="street-address" />
+        </label>
+        <label class="np-field" for={id('message')}>
+          <span class="np-label">Anything else? <span class="np-optional">(optional)</span></span>
+          <textarea class="np-textarea" id={id('message')} name="message" rows="4" placeholder="Tell us about your mission and what you need from a website."></textarea>
+        </label>
+        <button type="submit" class="np-btn np-btn-primary np-form__submit">Send and get started</button>
+        <p class="np-form__note">We'll only use your details to talk about your website.</p>
+      </>
+    )}
+  </form>
+
+  {/* Inline success state — swapped in by JS on submit (no page reload).
+      role="status" + aria-live announce it; tabindex=-1 lets JS move focus here. */}
+  <div class="np-success" data-np-success hidden role="status" aria-live="polite" tabindex="-1">
+    {isHero ? (
+      <>
+        <div class="np-success__check" aria-hidden="true">✓</div>
+        <h3 class="np-success__title np-success__title--sm">You're on your way.</h3>
+        <p class="np-success__copy">We've got your details and we'll reach out shortly to start building your site.</p>
+      </>
+    ) : (
+      <>
+        <div class="np-success__check np-success__check--lg" aria-hidden="true">✓</div>
+        <h3 class="np-success__title">Thank you — we've got it.</h3>
+        <p class="np-success__copy">Your details have been logged and emailed to our team. We'll reach out within a couple of business days to talk about your site.</p>
+      </>
+    )}
+  </div>
+</div>
+
+<style>
+  /* Paired fields: stacked single-column on mobile, 2-up at Small+. */
+  .np-form__pair { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .np-form__pair .np-field + .np-field { margin-top: 0; }
+  @media (min-width: 600px) {
+    .np-form__pair { grid-template-columns: 1fr 1fr; gap: 18px; }
+  }
+
+  .np-form__submit { margin-top: 22px; }
+  .np-form__note {
+    margin: 12px 0 0;
+    text-align: center;
+    color: var(--faint);
+    font-size: 13px;
+  }
+  .np-form__call {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* Inline success */
+  .np-success { text-align: center; padding: 26px 6px; }
+  .np-success__check {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e3f1ea;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .np-success__check--lg { width: 64px; height: 64px; font-size: 30px; }
+  .np-success__title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    margin: 20px 0 8px;
+  }
+  .np-success__title--sm { font-size: 22px; }
+  .np-success__copy {
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 24em;
+  }
+  @media (min-width: 900px) {
+    .np-success__title { font-size: 26px; }
+    .np-success__copy { font-size: 16px; }
+  }
+</style>
+
+<script>
+  import { FORM_ENDPOINT, isRealEndpoint } from '../data/site.ts';
+
+  // Wire every inquiry form on the page (hero + contact share this logic).
+  document.querySelectorAll<HTMLFormElement>('[data-np-form]').forEach((form) => {
+    const root = form.closest('[data-form-root]');
+    const success = root?.querySelector<HTMLElement>('[data-np-success]');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Native validation — required name/org/email/phone, email + tel formats.
+      if (!form.reportValidity()) return;
+
+      // Honeypot: if a bot filled "company", silently no-op (mirror real drop).
+      const hp = form.querySelector<HTMLInputElement>('input[name="company"]');
+      if (hp && hp.value.trim() !== '') return;
+
+      // Only hit the network when a real Apps Script endpoint is configured.
+      // Otherwise (placeholder) run concept-demo: validate + show success only.
+      if (isRealEndpoint) {
+        // Fire-and-forget — no-cors means we can't read the response, which is
+        // fine: the Apps Script logs to the Sheet + emails the team server-side.
+        fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: new URLSearchParams(new FormData(form) as any),
+        }).catch(() => {
+          /* swallow — UX still shows success; resubmission is harmless */
+        });
+      }
+
+      // Swap the form for the inline success markup (no reload).
+      form.hidden = true;
+      if (success) {
+        success.hidden = false;
+        success.focus?.();
+      }
+    });
+  });
+</script>
