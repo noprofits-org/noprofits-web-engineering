@@ -35,7 +35,7 @@ export const OG_IMAGE_PATH = '/og-image.png';
 // repo *variable* in CI; a local .env for dev) — deliberately NOT hardcoded here.
 // The /exec URL ships in the client bundle anyway (the browser POSTs to it), so
 // it is not a secret; keeping it out of the public repo / forks / git history
-// just closes the bot-harvest path. See HANDOFF-form-endpoint.md.
+// just closes the bot-harvest path.
 //
 // When unset it falls back to the placeholder and the forms run in preview mode
 // (client-side validation + an inline "not connected" notice, NO network call).
