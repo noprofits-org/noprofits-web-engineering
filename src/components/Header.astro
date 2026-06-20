@@ -1,5 +1,11 @@
 ---
 import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
+
+const NAV_LINKS = [
+  { href: '/#how', label: 'How it works' },
+  { href: '/#features', label: 'What you get' },
+  { href: '/#guides', label: 'Guides' },
+];
 ---
 
 <header class="np-header np-noprint">
@@ -14,26 +20,37 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
       <span class="np-dot" aria-hidden="true"></span>{PHONE_DISPLAY}
     </a>
 
-    <!-- Hamburger toggle — only shown below 900px. -->
+    <!-- Hamburger toggle — opens the side drawer below 900px. -->
     <button
       type="button"
       class="np-header__toggle"
       aria-label="Open menu"
       aria-expanded="false"
-      aria-controls="np-nav"
+      aria-controls="np-drawer"
     >
       <span class="np-burger" aria-hidden="true"></span>
     </button>
 
-    <!-- Inline nav at Medium+; collapses into disclosure panel on mobile. -->
-    <nav id="np-nav" class="np-nav" aria-label="Primary">
-      <a href="/#how" class="np-nav__link">How it works</a>
-      <a href="/#features" class="np-nav__link">What you get</a>
-      <a href="/#guides" class="np-nav__link">Guides</a>
+    <!-- Inline nav at Medium+ only. -->
+    <nav class="np-nav np-nav--inline" aria-label="Primary">
+      {NAV_LINKS.map((l) => <a href={l.href} class="np-nav__link">{l.label}</a>)}
       <a href="/#contact" class="np-nav__cta np-btn np-btn-primary">Start your site</a>
     </nav>
   </div>
 </header>
+
+<!-- Mobile-only off-canvas drawer (kept OUTSIDE the backdrop-filtered header so
+     position:fixed resolves against the viewport, not the header bar). -->
+<div class="np-scrim" data-drawer-scrim></div>
+
+<nav id="np-drawer" class="np-drawer" aria-label="Primary" aria-hidden="true">
+  <div class="np-drawer__head">
+    <span class="np-drawer__title">Menu</span>
+    <button type="button" class="np-drawer__close" aria-label="Close menu"></button>
+  </div>
+  {NAV_LINKS.map((l) => <a href={l.href} class="np-drawer__link">{l.label}</a>)}
+  <a href="/#contact" class="np-drawer__cta np-btn np-btn-primary">Start your site</a>
+</nav>
 
 <style>
   .np-header {
@@ -48,7 +65,6 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap; /* lets the open nav (order:3, width:100%) drop to its own row */
     gap: 16px;
     padding-top: 14px;
     padding-bottom: 14px;
@@ -75,6 +91,7 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     letter-spacing: -0.01em;
     white-space: nowrap; /* never break "noprofits.org" across two lines */
   }
+  .np-wordmark__tld { color: var(--accent); }
 
   /* Narrow phones: compact the bar so brand + phone + toggle fit on one line
      (the pill is rigid via flex:none/nowrap, so give the space back here). */
@@ -84,7 +101,6 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     .np-header__phone { padding: 8px 10px; font-size: 14px; }
     .np-header__phone .np-dot { display: none; }
   }
-  .np-wordmark__tld { color: var(--accent); }
 
   .np-header__phone {
     display: inline-flex;
@@ -121,6 +137,7 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     background: #fff;
     cursor: pointer;
     padding: 0;
+    flex: none;
   }
   .np-burger,
   .np-burger::before,
@@ -131,106 +148,177 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     height: 2px;
     background: var(--ink);
     border-radius: 2px;
-    transition: transform 0.2s ease, opacity 0.2s ease;
   }
   .np-burger { position: relative; }
   .np-burger::before { position: absolute; top: -6px; left: 0; }
   .np-burger::after { position: absolute; top: 6px; left: 0; }
-  .np-header__toggle[aria-expanded='true'] .np-burger { background: transparent; }
-  .np-header__toggle[aria-expanded='true'] .np-burger::before { transform: translateY(6px) rotate(45deg); }
-  .np-header__toggle[aria-expanded='true'] .np-burger::after { transform: translateY(-6px) rotate(-45deg); }
 
-  /* Nav — base: collapsed disclosure panel (full-width drop-down). */
-  .np-nav {
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
-    order: 3; /* drop below the bar */
-    padding: 8px 0 6px;
+  /* Inline nav — hidden on mobile, shown inline at Medium+. */
+  .np-nav--inline { display: none; }
+
+  /* ---- Mobile off-canvas drawer ---- */
+  .np-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(20, 20, 20, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
   }
-  .np-nav.is-open {
+  .np-scrim.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .np-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 70;
+    height: 100dvh;
+    width: min(84vw, 340px);
+    background: #f7f4ee;
+    border-left: 1px solid #e7e1d6;
+    box-shadow: -10px 0 28px rgba(0, 0, 0, 0.16);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.28s ease, visibility 0.28s ease;
     display: flex;
-    margin-top: 6px;
-    border-top: 1px solid #e7e1d6;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 18px calc(env(safe-area-inset-bottom, 0px) + 20px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
-  .np-nav__link {
-    text-decoration: none;
-    color: var(--slate);
-    font-weight: 500;
-    font-size: 16px;
-    padding: 12px 4px;
-    min-height: 44px;
+  .np-drawer.is-open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+  .np-drawer__head {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    margin-bottom: 6px;
   }
-  .np-nav__cta { margin-top: 6px; } /* full-width via .np-btn base */
+  .np-drawer__title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+  .np-drawer__close {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+  }
+  .np-drawer__close::before,
+  .np-drawer__close::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+  }
+  .np-drawer__close::before { transform: translate(-50%, -50%) rotate(45deg); }
+  .np-drawer__close::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
-  /* Medium+: inline nav, hide hamburger + the duplicate panel behavior. */
+  .np-drawer__link {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 4px 6px;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 17px;
+    border-bottom: 1px solid #e7e1d6;
+  }
+  .np-drawer__cta {
+    margin-top: 16px;
+  } /* full-width via .np-btn base */
+
+  /* Medium+: inline nav in the bar, no hamburger/drawer/scrim. */
   @media (min-width: 900px) {
     .np-header__toggle { display: none; }
-    .np-nav,
-    .np-nav.is-open {
+    .np-scrim,
+    .np-drawer { display: none; }
+    .np-nav--inline {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 28px;
-      width: auto;
-      order: 0;
-      padding: 0;
-      margin-top: 0;
-      border-top: 0;
     }
     .np-nav__link {
+      text-decoration: none;
+      color: var(--slate);
+      font-weight: 500;
       font-size: 15px;
-      padding: 0;
-      min-height: 0;
     }
     .np-nav__cta {
-      width: auto;
-      min-height: 0;
       padding: 10px 18px;
       font-size: 15px;
-      margin-top: 0;
     }
-    /* Phone link order: sits before the CTA in the inline layout */
+    /* Phone link sits before the CTA in the inline layout */
     .np-header__phone { order: -1; }
+  }
+
+  /* Lock background scroll while the drawer is open. */
+  :global(body.np-no-scroll) {
+    overflow: hidden;
   }
 </style>
 
 <script>
-  // Hamburger disclosure — toggles the nav panel below 900px.
+  // Side-drawer disclosure (mobile, below 900px).
   const toggle = document.querySelector<HTMLButtonElement>('.np-header__toggle');
-  const nav = document.getElementById('np-nav');
-  if (toggle && nav) {
+  const drawer = document.getElementById('np-drawer');
+  const scrim = document.querySelector<HTMLElement>('[data-drawer-scrim]');
+  const closeBtn = drawer?.querySelector<HTMLButtonElement>('.np-drawer__close');
+
+  if (toggle && drawer && scrim) {
+    const setOpen = (open: boolean) => {
+      drawer.classList.toggle('is-open', open);
+      scrim.classList.toggle('is-open', open);
+      drawer.setAttribute('aria-hidden', String(!open));
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.classList.toggle('np-no-scroll', open);
+    };
+    const open = () => {
+      setOpen(true);
+      closeBtn?.focus();
+    };
     const close = (returnFocus = false) => {
-      nav.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-label', 'Open menu');
+      setOpen(false);
       if (returnFocus) toggle.focus();
     };
 
-    toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    });
+    toggle.addEventListener('click', () =>
+      toggle.getAttribute('aria-expanded') === 'true' ? close(true) : open()
+    );
+    closeBtn?.addEventListener('click', () => close(true));
+    scrim.addEventListener('click', () => close());
 
-    // Close the menu after tapping any link inside it.
-    nav.querySelectorAll('a').forEach((a) =>
+    // Close after tapping any link in the drawer.
+    drawer.querySelectorAll('a').forEach((a) =>
       a.addEventListener('click', () => close())
     );
 
-    // Escape closes the panel and returns focus to the toggle.
+    // Escape closes and returns focus to the toggle.
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && nav.classList.contains('is-open')) close(true);
-    });
-
-    // Outside-click closes the panel (mobile only — panel hidden at ≥900px).
-    document.addEventListener('click', (e) => {
-      if (!nav.classList.contains('is-open')) return;
-      const t = e.target as Node;
-      if (!nav.contains(t) && !toggle.contains(t)) close();
+      if (e.key === 'Escape' && drawer.classList.contains('is-open')) close(true);
     });
   }
 </script>
