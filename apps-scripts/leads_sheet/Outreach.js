@@ -8,7 +8,7 @@
  * WHY MANUAL (not an auto-reply from doPost): a human triggers every send, to
  * the address already captured in the row — so this is NOT an open relay /
  * reflection / backscatter vector, and it does not add a per-submission MailApp
- * send that a bot flood could use to burn the daily quota. See SECURITY-REVIEW.md.
+ * send that a bot flood could use to burn the daily quota.
  *
  * Lives in the same script project as Code.js (doPost). clasp pushes every .js
  * in the project; multiple files are fine.
