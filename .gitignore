@@ -12,6 +12,10 @@ node_modules/
 .env
 .env.production
 
+# clasp OAuth credentials (refresh token) — never commit
+.clasprc.json
+**/.clasprc.json
+
 # macOS
 .DS_Store
 

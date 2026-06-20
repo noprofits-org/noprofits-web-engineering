@@ -1,3 +1,24 @@
+/* Self-hosted variable fonts (latin subset) — replaces the render-blocking
+   Google Fonts stylesheet. One variable file per family, served same-origin
+   from /public/fonts and cached immutable via firebase.json. To refresh:
+   re-run the latin-subset download and overwrite the two woff2 files. */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/bricolage-grotesque.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/hanken-grotesk.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* =============================================================================
    noprofits.org — global stylesheet
    Mobile-first: base styles target the phone (0–599px); min-width media queries
@@ -18,8 +39,11 @@
   /* --- Forest supporting (dark-section numeric accent + footer mark) */
   --mint: #9FD0BF;
 
-  /* --- Terracotta (required-asterisks + accent marks only) */
+  /* --- Terracotta (decorative accent marks only) */
   --terracotta: #C8632E;
+  /* Required-field asterisk: darkened terracotta so the glyph clears AA (~5:1)
+     on white/cream; plain --terracotta (#C8632E) was ~3.98:1, just under. */
+  --req: #B0551F;
 
   /* --- Warm neutrals */
   --cream: #F7F4EE;        /* page background */
@@ -163,7 +187,8 @@ img { max-width: 100%; height: auto; }
   text-wrap: pretty;
 }
 .np-eyebrow {
-  color: var(--accent);
+  /* --accent-deep clears AA on cream (≈7.4:1); plain --accent was 4.17:1. */
+  color: var(--accent-deep);
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.08em;
@@ -221,7 +246,7 @@ img { max-width: 100%; height: auto; }
   font-size: 14px;
   margin-bottom: 7px;
 }
-.np-req { color: var(--terracotta); }
+.np-req { color: var(--req); }
 .np-optional { color: var(--faint); font-weight: 400; }
 .np-input,
 .np-textarea {

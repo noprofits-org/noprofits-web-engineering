@@ -41,6 +41,10 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+        env:
+          # The deployed Apps Script /exec URL (a repo Variable, not a Secret —
+          # it ships in the client bundle). Build guard fails if unset/placeholder.
+          PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
 
       - id: auth
         uses: google-github-actions/auth@v2

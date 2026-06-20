@@ -12,6 +12,11 @@ import {
 
 const title = `${SITE_NAME} — Free professional websites for non-profits`;
 
+// Tighter than SITE_DESCRIPTION (186 chars clips in SERPs); the longer copy
+// still feeds the Service/OG JSON-LD. ~150 chars, value prop front-loaded.
+const pageDescription =
+  'Free, professional websites for non-profits across greater Seattle — built well, hosted free on the Google Workspace you already have, and owned by you.';
+
 // Service schema describing the core offering for the homepage.
 const serviceLd = {
   '@context': 'https://schema.org',
@@ -34,7 +39,7 @@ const serviceLd = {
 };
 ---
 
-<BaseLayout title={title} description={SITE_DESCRIPTION} path="/" jsonLd={serviceLd}>
+<BaseLayout title={title} description={pageDescription} path="/" jsonLd={serviceLd}>
   <Header />
 
   <main id="main">
@@ -422,7 +427,8 @@ const serviceLd = {
   .np-step__h { margin: 18px 0 8px; }
   .np-step__h--accent { color: #fff; }
   .np-step__p { margin: 0; color: var(--muted); font-size: 15px; }
-  .np-step__p--accent { color: #cfe6dc; }
+  /* White (not #cfe6dc) on the solid --accent step card — #cfe6dc was 3.49:1. */
+  .np-step__p--accent { color: #fff; }
   @media (min-width: 900px) {
     .np-how__grid { margin-top: 48px; }
     .np-step { padding: 28px 26px; }
@@ -547,7 +553,8 @@ const serviceLd = {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    color: var(--accent);
+    /* --accent-deep clears AA on the offwhite card; plain --accent was 4.39:1. */
+    color: var(--accent-deep);
     font-weight: 600;
     font-size: 14px;
   }

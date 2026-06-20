@@ -1,0 +1,123 @@
+---
+// End-of-guide conversion block: a "build it for you" CTA + cross-links to the
+// other guides, so a reader landing from search has a path to convert and to
+// the rest of the series instead of hitting a dead end. Screen-only (np-noprint).
+interface Props {
+  /** Slug of the current guide, excluded from the cross-links. */
+  current: string;
+}
+const { current } = Astro.props;
+
+const GUIDES = [
+  {
+    slug: 'forms-that-email-you',
+    title: 'Forms that email you',
+    blurb: 'Save every submission to a Google Sheet and your inbox — no database, no fees.',
+  },
+  {
+    slug: 'launch-free-on-google-workspace',
+    title: 'Launch free on Google Workspace',
+    blurb: 'Take a non-profit from a bare domain to a live site at no hosting cost.',
+  },
+  {
+    slug: 'seo-basics-for-nonprofits',
+    title: 'SEO basics for non-profits',
+    blurb: 'Get found on Google with honest titles, local relevance, and listings.',
+  },
+];
+const others = GUIDES.filter((g) => g.slug !== current);
+---
+
+<aside class="np-guidecta np-noprint">
+  <div class="np-guidecta__conv">
+    <h2 class="np-guidecta__h">Want this built for you — free?</h2>
+    <p class="np-guidecta__p">
+      We design, build, and set up sites like this for non-profits across greater Seattle at no
+      cost. Tell us about yours and we'll take it from here.
+    </p>
+    <a href="/#contact" class="np-btn np-btn-primary">Start your free site</a>
+  </div>
+
+  <div class="np-guidecta__more">
+    <p class="np-guidecta__morehead">More free guides</p>
+    <ul class="np-guidecta__list">
+      {others.map((g) => (
+        <li>
+          <a href={`/guides/${g.slug}/`} class="np-guidecta__link">
+            <span class="np-guidecta__t">{g.title}</span>
+            <span class="np-guidecta__b">{g.blurb}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</aside>
+
+<style>
+  .np-guidecta {
+    max-width: 820px;
+    margin: 28px auto 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .np-guidecta__conv {
+    background: var(--ink);
+    color: #f4f1ea;
+    border-radius: 12px;
+    padding: 28px 24px;
+  }
+  .np-guidecta__h {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    color: #fff;
+  }
+  .np-guidecta__p {
+    margin: 0 0 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #cdd4cd;
+    max-width: 40em;
+  }
+  .np-guidecta__more {
+    background: #fff;
+    border: 1px solid #dde3dd;
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .np-guidecta__morehead {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    margin: 0 0 12px;
+  }
+  .np-guidecta__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .np-guidecta__link {
+    display: block;
+    text-decoration: none;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--cream);
+    transition: background 0.15s ease;
+  }
+  .np-guidecta__link:hover { background: var(--sky-tint); }
+  .np-guidecta__t {
+    display: block;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .np-guidecta__b { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+  @media (min-width: 760px) {
+    .np-guidecta { grid-template-columns: 1.1fr 1fr; align-items: stretch; }
+    .np-guidecta__conv { padding: 32px 30px; }
+  }
+</style>

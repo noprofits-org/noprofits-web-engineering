@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import GuideFooterCta from '../../components/GuideFooterCta.astro';
 import { EMAIL, SITE_NAME, SITE_URL } from '../../data/site.ts';
 
-const title = 'Collect inquiries with a form that emails you — Guide | noprofits.org';
+const title = 'Collect inquiries: forms that email you | noprofits.org';
 const description =
-  'A plain-English, print-ready guide for volunteers and board members: how a website form can save every submission to a Google Sheet and email your team automatically — no database, no monthly fees.';
+  'How a website form can save every submission to a Google Sheet and email your team automatically — no database, no monthly fees. A plain-English guide.';
 const path = '/guides/forms-that-email-you/';
 
 const articleLd = {
@@ -14,6 +16,9 @@ const articleLd = {
   description,
   url: new URL(path, SITE_URL).href,
   publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  datePublished: '2026-06-20',
+  dateModified: '2026-06-20',
   inLanguage: 'en',
 };
 ---
@@ -29,7 +34,7 @@ const articleLd = {
     <!-- Screen-only chrome (hidden in print / PDF). -->
     <div class="np-guidebar np-noprint">
       <div class="np-guidebar__inner">
-        <a href="/" class="np-guidebar__back">← Back to site</a>
+        <a href="/#guides" class="np-guidebar__back">← All guides</a>
         <button type="button" class="np-guidebar__print" data-print-guide>Print / Save as PDF</button>
       </div>
     </div>
@@ -111,7 +116,11 @@ const articleLd = {
         noprofits.org · Free websites for non-profits across greater Seattle · {EMAIL}
       </p>
     </article>
+
+    <GuideFooterCta current="forms-that-email-you" />
   </main>
+
+  <Footer />
 
   <style>
     .np-guidepage { background: #e9ece8; min-height: 100vh; padding: 0 0 48px; }

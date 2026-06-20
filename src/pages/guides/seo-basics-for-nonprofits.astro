@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import GuideFooterCta from '../../components/GuideFooterCta.astro';
 import { EMAIL, SITE_NAME, SITE_URL } from '../../data/site.ts';
 
-const title = 'Get found on Google: SEO basics for non-profits — Guide | noprofits.org';
+const title = 'Get found on Google: SEO for non-profits | noprofits.org';
 const description =
-  'A plain-English, print-ready guide to search basics for non-profits: clear page purpose, honest titles and descriptions, your Google Business Profile, local relevance, and getting listed — no jargon, no false promises.';
+  'Plain-English search basics for non-profits: clear page purpose, honest titles, your Google Business Profile, local relevance, and getting listed.';
 const path = '/guides/seo-basics-for-nonprofits/';
 
 const articleLd = {
@@ -14,6 +16,9 @@ const articleLd = {
   description,
   url: new URL(path, SITE_URL).href,
   publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  datePublished: '2026-06-20',
+  dateModified: '2026-06-20',
   inLanguage: 'en',
 };
 ---
@@ -29,7 +34,7 @@ const articleLd = {
     <!-- Screen-only chrome (hidden in print / PDF). -->
     <div class="np-guidebar np-noprint">
       <div class="np-guidebar__inner">
-        <a href="/" class="np-guidebar__back">← Back to site</a>
+        <a href="/#guides" class="np-guidebar__back">← All guides</a>
         <button type="button" class="np-guidebar__print" data-print-guide>Print / Save as PDF</button>
       </div>
     </div>
@@ -109,7 +114,11 @@ const articleLd = {
         noprofits.org · Free websites for non-profits across greater Seattle · {EMAIL}
       </p>
     </article>
+
+    <GuideFooterCta current="seo-basics-for-nonprofits" />
   </main>
+
+  <Footer />
 
   <style>
     .np-guidepage { background: #e9ece8; min-height: 100vh; padding: 0 0 48px; }

@@ -16,14 +16,15 @@ import { EMAIL } from '../data/site.ts';
     <div class="np-footer__cols">
       <div class="np-footer__col">
         <p class="np-footer__heading">Explore</p>
-        <a href="#how" class="np-footer__link">How it works</a>
-        <a href="#features" class="np-footer__link">What you get</a>
-        <a href="#guides" class="np-footer__link">Free guides</a>
+        <a href="/#how" class="np-footer__link">How it works</a>
+        <a href="/#features" class="np-footer__link">What you get</a>
+        <a href="/#guides" class="np-footer__link">Free guides</a>
       </div>
       <div class="np-footer__col">
         <p class="np-footer__heading">Get started</p>
-        <a href="#contact" class="np-footer__link">Start your site</a>
+        <a href="/#contact" class="np-footer__link">Start your site</a>
         <a href={`mailto:${EMAIL}`} class="np-footer__link">{EMAIL}</a>
+        <a href="/privacy/" class="np-footer__link">Privacy</a>
       </div>
     </div>
   </div>
@@ -79,7 +80,8 @@ import { EMAIL } from '../data/site.ts';
     color: #aeb6af;
     text-decoration: none;
     font-size: 15px;
-    min-height: 24px;
+    /* 44px tap target per the Mobile-First spec (was 24px). */
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
   }

@@ -31,15 +31,22 @@ export const OG_IMAGE_PATH = '/og-image.svg';
 // -----------------------------------------------------------------------------
 // FORM_ENDPOINT — the single shared submission target for BOTH forms.
 //
-// Replace the placeholder below with the deployed Google Apps Script web-app
-// `/exec` URL when it is ready (a later step). Until then it stays a clearly
-// marked placeholder and the forms run in concept-demo mode (client-side
-// validation + inline success, NO network call). See `isRealEndpoint`.
+// Injected at BUILD TIME from the PUBLIC_FORM_ENDPOINT env var (a GitHub Actions
+// repo *variable* in CI; a local .env for dev) — deliberately NOT hardcoded here.
+// The /exec URL ships in the client bundle anyway (the browser POSTs to it), so
+// it is not a secret; keeping it out of the public repo / forks / git history
+// just closes the bot-harvest path. See HANDOFF-form-endpoint.md.
+//
+// When unset it falls back to the placeholder and the forms run in preview mode
+// (client-side validation + an inline "not connected" notice, NO network call).
+// The production build guard in astro.config.mjs refuses to build while it is
+// the placeholder, so a dead form can never ship live.
 // -----------------------------------------------------------------------------
-export const FORM_ENDPOINT = '[CONFIRM: Apps Script /exec URL]';
+export const FORM_ENDPOINT =
+  import.meta.env.PUBLIC_FORM_ENDPOINT ?? '[CONFIRM: Apps Script /exec URL]';
 
 /**
  * True only when FORM_ENDPOINT points at a real deployed Apps Script web app.
- * Drives whether the forms actually POST or just demo the success state.
+ * Drives whether the forms actually POST or just show the preview notice.
  */
 export const isRealEndpoint = FORM_ENDPOINT.startsWith('https://script.google.com');

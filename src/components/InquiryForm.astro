@@ -51,7 +51,7 @@ const id = (field: string) => `${ns}-${field}`;
           </label>
         </div>
         <button type="submit" class="np-btn np-btn-primary np-form__submit">Start my free site</button>
-        <p class="np-form__note">Or call <a href={`tel:${PHONE_TEL}`} class="np-form__call">{PHONE_DISPLAY}</a></p>
+        <p class="np-form__note">Or call <a href={`tel:${PHONE_TEL}`} class="np-form__call">{PHONE_DISPLAY}</a>. We only use your details to talk about your website — see our <a href="/privacy/" class="np-form__call">Privacy policy</a>.</p>
       </>
     ) : (
       <>
@@ -82,7 +82,7 @@ const id = (field: string) => `${ns}-${field}`;
           <textarea class="np-textarea" id={id('message')} name="message" rows="4" placeholder="Tell us about your mission and what you need from a website."></textarea>
         </label>
         <button type="submit" class="np-btn np-btn-primary np-form__submit">Send and get started</button>
-        <p class="np-form__note">We'll only use your details to talk about your website.</p>
+        <p class="np-form__note">We only use your details to talk about your website — see our <a href="/privacy/" class="np-form__call">Privacy policy</a>.</p>
       </>
     )}
   </form>
@@ -100,10 +100,15 @@ const id = (field: string) => `${ns}-${field}`;
       <>
         <div class="np-success__check np-success__check--lg" aria-hidden="true">✓</div>
         <h3 class="np-success__title">Thank you — we've got it.</h3>
-        <p class="np-success__copy">Your details have been logged and emailed to our team. We'll reach out within a couple of business days to talk about your site.</p>
+        <p class="np-success__copy">Your details are on their way to our team. We'll reach out within a couple of business days to talk about your site.</p>
       </>
     )}
   </div>
+
+  {/* Error / notice region — revealed by JS when a send fails (network error)
+      or when the form is in preview mode. role="alert" announces it; the form
+      is re-shown on error so the visitor can retry. */}
+  <p class="np-formnotice" data-np-notice hidden role="alert" aria-live="assertive"></p>
 </div>
 
 <style>
@@ -122,10 +127,24 @@ const id = (field: string) => `${ns}-${field}`;
     font-size: 13px;
   }
   .np-form__call {
-    color: var(--accent);
+    /* --accent-deep clears AA (≈7.4:1) on cream/offwhite; plain --accent did not. */
+    color: var(--accent-deep);
     font-weight: 600;
     text-decoration: none;
   }
+
+  /* Error / preview notice shown when a submission can't be sent. */
+  .np-formnotice {
+    margin: 16px 0 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #fbeae0;
+    border: 1px solid #e8c3ad;
+    color: #7a3a16;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .np-formnotice a { color: inherit; font-weight: 600; }
 
   /* Inline success */
   .np-success { text-align: center; padding: 26px 6px; }
@@ -163,15 +182,40 @@ const id = (field: string) => `${ns}-${field}`;
 </style>
 
 <script>
-  import { FORM_ENDPOINT, isRealEndpoint } from '../data/site.ts';
+  import { FORM_ENDPOINT, isRealEndpoint, PHONE_DISPLAY, PHONE_TEL, EMAIL } from '../data/site.ts';
 
   // Wire every inquiry form on the page (hero + contact share this logic).
   document.querySelectorAll<HTMLFormElement>('[data-np-form]').forEach((form) => {
     const root = form.closest('[data-form-root]');
     const success = root?.querySelector<HTMLElement>('[data-np-success]');
+    const notice = root?.querySelector<HTMLElement>('[data-np-notice]');
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    const showNotice = (html: string) => {
+      if (!notice) return;
+      notice.innerHTML = html;
+      notice.hidden = false;
+    };
+    const clearNotice = () => {
+      if (!notice) return;
+      notice.hidden = true;
+      notice.textContent = '';
+    };
+    const showSuccess = () => {
+      clearNotice();
+      form.hidden = true;
+      if (success) {
+        success.hidden = false;
+        success.focus?.();
+      }
+    };
+    const reachUs =
+      `please try again, or reach us at <a href="tel:${PHONE_TEL}">${PHONE_DISPLAY}</a>` +
+      ` or <a href="mailto:${EMAIL}">${EMAIL}</a>.`;
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+      clearNotice();
 
       // Native validation — required name/org/email/phone, email + tel formats.
       if (!form.reportValidity()) return;
@@ -180,26 +224,29 @@ const id = (field: string) => `${ns}-${field}`;
       const hp = form.querySelector<HTMLInputElement>('input[name="company"]');
       if (hp && hp.value.trim() !== '') return;
 
-      // Only hit the network when a real Apps Script endpoint is configured.
-      // Otherwise (placeholder) run concept-demo: validate + show success only.
-      if (isRealEndpoint) {
-        // Fire-and-forget — no-cors means we can't read the response, which is
-        // fine: the Apps Script logs to the Sheet + emails the team server-side.
-        fetch(FORM_ENDPOINT, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: new URLSearchParams(new FormData(form) as any),
-        }).catch(() => {
-          /* swallow — UX still shows success; resubmission is harmless */
-        });
+      // Preview mode (placeholder endpoint): be honest — nothing was sent.
+      // The production build guard prevents this state from ever shipping live.
+      if (!isRealEndpoint) {
+        showNotice('Preview mode — the form isn’t connected yet, so nothing was sent.');
+        return;
       }
 
-      // Swap the form for the inline success markup (no reload).
-      form.hidden = true;
-      if (success) {
-        success.hidden = false;
-        success.focus?.();
-      }
+      // Real submit. no-cors means the response is opaque (we can't read status),
+      // but the promise still REJECTS on a true network failure — the most
+      // damaging case. Only show success once the request actually settles.
+      if (submitBtn) submitBtn.disabled = true;
+      fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: new URLSearchParams(new FormData(form) as any),
+      })
+        .then(() => {
+          showSuccess();
+        })
+        .catch(() => {
+          if (submitBtn) submitBtn.disabled = false;
+          showNotice(`We couldn’t send that just now — ${reachUs}`);
+        });
     });
   });
 </script>
