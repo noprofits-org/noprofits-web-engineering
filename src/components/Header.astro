@@ -5,7 +5,7 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
 <header class="np-header np-noprint">
   <div class="np-container np-header__bar">
     <a href="/#top" class="np-header__brand" aria-label="noprofits.org home">
-      <span class="np-brandmark" aria-hidden="true">n</span>
+      <img src="/brandmark.svg" alt="" class="np-brandmark" width="32" height="32" aria-hidden="true" />
       <span class="np-wordmark">noprofits<span class="np-wordmark__tld">.org</span></span>
     </a>
 
@@ -62,17 +62,10 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     min-width: 0; /* let the row compute tight widths on small phones */
   }
   .np-brandmark {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-weight: 800;
-    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    display: block;
+    flex: none;
   }
   .np-wordmark {
     font-family: 'Bricolage Grotesque', sans-serif;
