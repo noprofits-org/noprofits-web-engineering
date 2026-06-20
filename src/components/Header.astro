@@ -1,0 +1,235 @@
+---
+import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
+---
+
+<header class="np-header np-noprint">
+  <div class="np-container np-header__bar">
+    <a href="/#top" class="np-header__brand" aria-label="noprofits.org home">
+      <span class="np-brandmark" aria-hidden="true">n</span>
+      <span class="np-wordmark">noprofits<span class="np-wordmark__tld">.org</span></span>
+    </a>
+
+    <!-- Phone stays visible at all sizes (one-tap reachable). -->
+    <a href={`tel:${PHONE_TEL}`} class="np-header__phone" aria-label="Call noprofits.org">
+      <span class="np-dot" aria-hidden="true"></span>{PHONE_DISPLAY}
+    </a>
+
+    <!-- Hamburger toggle — only shown below 900px. -->
+    <button
+      type="button"
+      class="np-header__toggle"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="np-nav"
+    >
+      <span class="np-burger" aria-hidden="true"></span>
+    </button>
+
+    <!-- Inline nav at Medium+; collapses into disclosure panel on mobile. -->
+    <nav id="np-nav" class="np-nav" aria-label="Primary">
+      <a href="/#how" class="np-nav__link">How it works</a>
+      <a href="/#features" class="np-nav__link">What you get</a>
+      <a href="/#guides" class="np-nav__link">Guides</a>
+      <a href="/#contact" class="np-nav__cta np-btn np-btn-primary">Start your site</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .np-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(247, 244, 238, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e7e1d6;
+  }
+  .np-header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .np-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    margin-right: auto;
+    min-width: 0; /* let the row compute tight widths on small phones */
+  }
+  .np-brandmark {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+  }
+  .np-wordmark {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    white-space: nowrap; /* never break "noprofits.org" across two lines */
+  }
+
+  /* Narrow phones: compact the bar so brand + phone + toggle fit on one line
+     (the pill is rigid via flex:none/nowrap, so give the space back here). */
+  @media (max-width: 400px) {
+    .np-header__bar { gap: 10px; }
+    .np-wordmark { font-size: 18px; }
+    .np-header__phone { padding: 8px 10px; font-size: 14px; }
+    .np-header__phone .np-dot { display: none; }
+  }
+  .np-wordmark__tld { color: var(--accent); }
+
+  .np-header__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    flex: none;
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 9px 14px;
+    min-height: 44px;
+    border-radius: 10px;
+    border: 1px solid #cfe0d8;
+    background: #fff;
+  }
+  .np-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Hamburger button (mobile only) */
+  .np-header__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    padding: 0;
+  }
+  .np-burger,
+  .np-burger::before,
+  .np-burger::after {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .np-burger { position: relative; }
+  .np-burger::before { position: absolute; top: -6px; left: 0; }
+  .np-burger::after { position: absolute; top: 6px; left: 0; }
+  .np-header__toggle[aria-expanded='true'] .np-burger { background: transparent; }
+  .np-header__toggle[aria-expanded='true'] .np-burger::before { transform: translateY(6px) rotate(45deg); }
+  .np-header__toggle[aria-expanded='true'] .np-burger::after { transform: translateY(-6px) rotate(-45deg); }
+
+  /* Nav — base: collapsed disclosure panel (full-width drop-down). */
+  .np-nav {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    order: 3; /* drop below the bar */
+    padding: 8px 0 6px;
+  }
+  .np-nav.is-open { display: flex; }
+  .np-nav__link {
+    text-decoration: none;
+    color: var(--slate);
+    font-weight: 500;
+    font-size: 16px;
+    padding: 12px 4px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .np-nav__cta { margin-top: 6px; } /* full-width via .np-btn base */
+
+  /* Medium+: inline nav, hide hamburger + the duplicate panel behavior. */
+  @media (min-width: 900px) {
+    .np-header__toggle { display: none; }
+    .np-nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 28px;
+      width: auto;
+      order: 0;
+      padding: 0;
+    }
+    .np-nav__link {
+      font-size: 15px;
+      padding: 0;
+      min-height: 0;
+    }
+    .np-nav__cta {
+      width: auto;
+      min-height: 0;
+      padding: 10px 18px;
+      font-size: 15px;
+      margin-top: 0;
+    }
+    /* Phone link order: sits before the CTA in the inline layout */
+    .np-header__phone { order: -1; }
+  }
+</style>
+
+<script>
+  // Hamburger disclosure — toggles the nav panel below 900px.
+  const toggle = document.querySelector<HTMLButtonElement>('.np-header__toggle');
+  const nav = document.getElementById('np-nav');
+  if (toggle && nav) {
+    const close = (returnFocus = false) => {
+      nav.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open menu');
+      if (returnFocus) toggle.focus();
+    };
+
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    // Close the menu after tapping any link inside it.
+    nav.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => close())
+    );
+
+    // Escape closes the panel and returns focus to the toggle.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) close(true);
+    });
+
+    // Outside-click closes the panel (mobile only — panel hidden at ≥900px).
+    document.addEventListener('click', (e) => {
+      if (!nav.classList.contains('is-open')) return;
+      const t = e.target as Node;
+      if (!nav.contains(t) && !toggle.contains(t)) close();
+    });
+  }
+</script>

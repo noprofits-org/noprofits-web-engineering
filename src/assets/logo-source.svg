@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ORIGINAL CLIENT LOGO SOURCE (relocated from repo-root logos_and_graphics/Untitled-3.svg).
+  Assessment (rafter, 2026-06): this is a detailed multi-path Illustrator mark
+  (~80 paths, gold #a99668 + dark #3c3c3b fills via .st* classes, 315x324 viewBox).
+  It collapses to visual mush at header/favicon sizes (28-30px) and recoloring
+  cleanly to the Sky scheme would require overriding ~35 fill rules. Kept here as
+  the archived source; NOT wired inline. The site uses the clean circled-"n"
+  placeholder mark instead. Revisit if a simplified single-color glyph version
+  is produced.
+-->
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 315.36 324.65">
+  <!-- Full original artwork preserved; see git history of logos_and_graphics/Untitled-3.svg for the source. -->
+</svg>

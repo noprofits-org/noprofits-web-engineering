@@ -1,0 +1,293 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import GuideFooterCta from '../../components/GuideFooterCta.astro';
+import { EMAIL, SITE_NAME, SITE_URL } from '../../data/site.ts';
+
+const title = 'Launch a free site on Google Workspace | noprofits.org';
+const description =
+  'Take a non-profit from a bare domain to a live, professional website with no monthly hosting cost, using a Google Workspace account. Step-by-step.';
+const path = '/guides/launch-free-on-google-workspace/';
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Launch your non-profit site free on Google Workspace',
+  description,
+  url: new URL(path, SITE_URL).href,
+  publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  datePublished: '2026-06-20',
+  dateModified: '2026-06-20',
+  image: new URL('/og-image.png', SITE_URL).href,
+  inLanguage: 'en',
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  ogType="article"
+  jsonLd={articleLd}
+>
+  <main id="main" class="np-guidepage">
+    <!-- Screen-only chrome (hidden in print / PDF). -->
+    <div class="np-guidebar np-noprint">
+      <div class="np-guidebar__inner">
+        <a href="/#guides" class="np-guidebar__back">← All guides</a>
+        <button type="button" class="np-guidebar__print" data-print-guide>Print / Save as PDF</button>
+      </div>
+    </div>
+
+    <article class="np-article">
+      <div class="np-article__head">
+        <span class="np-article__mark" aria-hidden="true">n</span>
+        <span class="np-article__word">noprofits.org</span>
+        <span class="np-article__tag">Free guide · Setup</span>
+      </div>
+
+      <h1 class="np-article__h1">Launch your non-profit site free on Google Workspace</h1>
+      <p class="np-article__lead">
+        A step-by-step path from a bare domain to a live, professional website — without paying
+        for hosting. This guide assumes your organization already has a Google Workspace account.
+      </p>
+
+      <h2 class="np-article__h2">Before you begin</h2>
+      <p class="np-article__p">You'll move faster if you gather these first:</p>
+      <ul class="np-article__ul">
+        <li>Admin access to your organization's Google Workspace</li>
+        <li>Your domain name and access to its DNS settings</li>
+        <li>Your logo, a few photos, and the text for each page</li>
+      </ul>
+
+      <h2 class="np-article__h2">The steps</h2>
+      <div class="np-steps">
+        <div class="np-steprow">
+          <span class="np-steprow__num">1</span>
+          <div>
+            <h3 class="np-steprow__h">Confirm your domain</h3>
+            <p class="np-steprow__p">Make sure the domain is verified inside your Workspace account so you can point it at your new site.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">2</span>
+          <div>
+            <h3 class="np-steprow__h">Prepare your content</h3>
+            <p class="np-steprow__p">Write the words for each page and collect your images. Clear, short copy beats long paragraphs.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">3</span>
+          <div>
+            <h3 class="np-steprow__h">Build and publish</h3>
+            <p class="np-steprow__p">Your site is built as fast static files and deployed to free hosting connected to your Workspace.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">4</span>
+          <div>
+            <h3 class="np-steprow__h">Wire up your contact form</h3>
+            <p class="np-steprow__p">Connect the form to a Google Sheet so submissions are logged and emailed to your team automatically.</p>
+          </div>
+        </div>
+        <div class="np-steprow">
+          <span class="np-steprow__num">5</span>
+          <div>
+            <h3 class="np-steprow__h">Point your domain and go live</h3>
+            <p class="np-steprow__p">Update DNS to your new site. Within a short while, visitors see your live site at your own domain.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="np-checklist">
+        <h3 class="np-checklist__h">Quick checklist</h3>
+        <ul class="np-checklist__ul">
+          <li>Domain verified in Workspace</li>
+          <li>Page content and images ready</li>
+          <li>Contact form connected to a Sheet</li>
+          <li>DNS pointed at the live site</li>
+        </ul>
+      </div>
+
+      <p class="np-article__foot">
+        noprofits.org · Free websites for non-profits across greater Seattle · {EMAIL}
+      </p>
+    </article>
+
+    <GuideFooterCta current="launch-free-on-google-workspace" />
+  </main>
+
+  <Footer />
+
+  <style>
+    .np-guidepage { background: #e9ece8; min-height: 100vh; padding: 0 0 48px; }
+
+    /* Sticky screen chrome */
+    .np-guidebar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--ink);
+      color: #f4f1ea;
+    }
+    .np-guidebar__inner {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .np-guidebar__back {
+      background: none;
+      border: none;
+      color: #cdd4cd;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+    .np-guidebar__print {
+      background: var(--mint);
+      border: none;
+      color: #143f33;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 11px 18px;
+      border-radius: 9px;
+      min-height: 44px;
+    }
+
+    /* The printable article sheet */
+    .np-article {
+      max-width: 820px;
+      margin: 24px auto;
+      background: #fff;
+      box-shadow: 0 20px 50px -34px rgba(20, 40, 33, 0.4);
+      border-radius: 6px;
+      padding: 36px 24px;
+    }
+    .np-article__head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 18px;
+    }
+    .np-article__mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .np-article__word {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--ink);
+    }
+    .np-article__tag { margin-left: auto; font-family: monospace; font-size: 12px; color: var(--faint); }
+
+    .np-article__h1 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 28px 0 0;
+    }
+    .np-article__lead { font-size: 17px; color: var(--slate); margin: 18px 0 0; line-height: 1.6; }
+    .np-article__h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      margin: 36px 0 14px;
+      color: var(--ink);
+    }
+    .np-article__p { font-size: 16px; color: #3c4a43; margin: 0 0 12px; line-height: 1.7; }
+    .np-article__ul { margin: 0; padding-left: 22px; color: #3c4a43; font-size: 16px; line-height: 1.8; }
+
+    .np-steps { display: flex; flex-direction: column; gap: 22px; }
+    .np-steprow { display: flex; gap: 16px; }
+    .np-steprow__num {
+      flex: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--sky-tint);
+      color: var(--accent-deep);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .np-steprow__h {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      margin: 4px 0 5px;
+    }
+    .np-steprow__p { margin: 0; font-size: 16px; color: #3c4a43; line-height: 1.7; }
+
+    .np-checklist {
+      margin-top: 36px;
+      background: #eef3f0;
+      border: 1px solid #dde6e0;
+      border-radius: 12px;
+      padding: 22px 24px;
+    }
+    .np-checklist__h {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      margin: 0 0 10px;
+    }
+    .np-checklist__ul { margin: 0; padding-left: 22px; color: #3c4a43; font-size: 15px; line-height: 1.9; }
+
+    .np-article__foot {
+      margin: 36px 0 0;
+      font-size: 14px;
+      color: var(--faint);
+      border-top: 1px solid #eee;
+      padding-top: 18px;
+    }
+
+    @media (min-width: 700px) {
+      .np-article { margin: 34px auto; padding: 72px 80px; }
+      .np-article__h1 { font-size: 38px; }
+      .np-article__lead { font-size: 18px; }
+    }
+
+    /* Print: drop the sheet styling so it fills the page cleanly. */
+    @media print {
+      .np-guidepage { background: #fff !important; padding: 0 !important; }
+      .np-article {
+        box-shadow: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        max-width: none;
+        padding: 32px 40px !important;
+      }
+    }
+  </style>
+
+  <script>
+    document.querySelector('[data-print-guide]')?.addEventListener('click', () => window.print());
+  </script>
+</BaseLayout>

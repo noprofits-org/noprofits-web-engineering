@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SITE_NAME } from '../data/site.ts';
+
+const title = 'Privacy policy | noprofits.org';
+const description =
+  'What noprofits.org collects through its inquiry forms, why, where it is stored, how long it is kept, and how to request a copy or deletion.';
+const path = '/privacy/';
+
+// Keep the displayed date in one place.
+const LAST_UPDATED = 'June 20, 2026';
+---
+
+<BaseLayout title={title} description={description} path={path}>
+  <Header />
+  <main id="main" class="np-legal">
+    <div class="np-container np-legal__inner">
+      <p class="np-eyebrow">Privacy</p>
+      <h1 class="np-legal__h1">Privacy policy</h1>
+      <p class="np-legal__meta">Last updated {LAST_UPDATED}</p>
+
+      <p class="np-legal__p">
+        {SITE_NAME} builds free and low-cost websites for non-profits across greater Seattle. This
+        policy explains the only personal information we collect — what you send us through the
+        inquiry forms on this site — and exactly what we do with it. We keep this short on purpose.
+      </p>
+
+      <h2 class="np-legal__h2">What we collect</h2>
+      <p class="np-legal__p">
+        When you submit one of our inquiry forms, we collect only the details you choose to enter:
+      </p>
+      <ul class="np-legal__ul">
+        <li>Your name</li>
+        <li>Your organization's name</li>
+        <li>Your email address</li>
+        <li>Your phone number</li>
+        <li>A physical address <em>(optional)</em></li>
+        <li>Anything you write in the message box <em>(optional)</em></li>
+      </ul>
+      <p class="np-legal__p">
+        We do not use tracking cookies, advertising pixels, or third-party analytics, and we don't
+        build a profile of your visit. The site loads no third-party scripts.
+      </p>
+
+      <h2 class="np-legal__h2">Why we collect it</h2>
+      <p class="np-legal__p">
+        We use your details for one purpose: to reply to you and talk about building your website.
+        We do not use them for marketing lists, and we never sell, rent, or trade your information.
+      </p>
+
+      <h2 class="np-legal__h2">Where it's stored and who can see it</h2>
+      <p class="np-legal__p">
+        Submissions are saved to a private Google Sheet inside our own Google Workspace and sent to
+        our team by email so we can respond. Only {SITE_NAME} team members can see them. We use
+        Google Workspace — Google Sheets, Apps Script, and Gmail — to receive and store these
+        messages; Google processes that data on our behalf under its own terms. We don't share your
+        information with anyone else except where the law requires it.
+      </p>
+
+      <h2 class="np-legal__h2">How long we keep it</h2>
+      <p class="np-legal__p">
+        We keep inquiry details for up to <strong>24 months</strong> so we can follow up and keep a
+        record of work we've discussed, then delete them — or sooner if you ask. If we go on to
+        build your site, related project information is kept for as long as we work together.
+      </p>
+
+      <h2 class="np-legal__h2">Your choices</h2>
+      <p class="np-legal__p">
+        You can ask us at any time to send you a copy of what we hold about you, correct it, or
+        delete it. Email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and we'll take care of it. There is
+        no charge, and you don't need a reason.
+      </p>
+
+      <h2 class="np-legal__h2">Changes to this policy</h2>
+      <p class="np-legal__p">
+        If we change how we handle your information, we'll update this page and the "last updated"
+        date above.
+      </p>
+
+      <h2 class="np-legal__h2">Contact</h2>
+      <p class="np-legal__p">
+        Questions about your privacy? Email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> or call
+        <a href={`tel:${PHONE_TEL}`}>{PHONE_DISPLAY}</a>.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .np-legal { background: var(--cream); padding: 40px 0 64px; }
+  .np-legal__inner { max-width: 760px; }
+  .np-legal__h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 34px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 10px 0 0;
+  }
+  .np-legal__meta { color: var(--faint); font-size: 14px; margin: 10px 0 0; }
+  .np-legal__h2 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    margin: 34px 0 10px;
+    color: var(--ink);
+  }
+  .np-legal__p { font-size: 16px; color: var(--slate); margin: 0 0 12px; line-height: 1.7; }
+  .np-legal__ul {
+    margin: 0 0 12px;
+    padding-left: 22px;
+    color: var(--slate);
+    font-size: 16px;
+    line-height: 1.9;
+  }
+  .np-legal__p a { color: var(--accent-deep); font-weight: 600; }
+
+  @media (min-width: 900px) {
+    .np-legal { padding: 64px 0 88px; }
+    .np-legal__h1 { font-size: 42px; }
+  }
+</style>

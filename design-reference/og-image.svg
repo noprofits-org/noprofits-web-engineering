@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="noprofits.org — Free websites for non-profits">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16221D"/>
+      <stop offset="1" stop-color="#1C5572"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Accent rule -->
+  <rect x="90" y="120" width="64" height="8" rx="4" fill="#2F7DA3"/>
+
+  <!-- Brand lockup -->
+  <g transform="translate(90, 190)">
+    <circle cx="44" cy="44" r="44" fill="#2F7DA3"/>
+    <text x="44" y="62" text-anchor="middle" font-family="'Bricolage Grotesque', sans-serif" font-weight="800" font-size="48" fill="#ffffff">n</text>
+    <text x="112" y="60" font-family="'Bricolage Grotesque', sans-serif" font-weight="700" font-size="52" fill="#F7F4EE">noprofits<tspan fill="#9FD0BF">.org</tspan></text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="90" y="380" font-family="'Bricolage Grotesque', sans-serif" font-weight="800" font-size="74" fill="#ffffff" letter-spacing="-1.5">Free websites for</text>
+  <text x="90" y="466" font-family="'Bricolage Grotesque', sans-serif" font-weight="800" font-size="74" fill="#ffffff" letter-spacing="-1.5">non-profits.</text>
+
+  <!-- Subline -->
+  <text x="90" y="538" font-family="'Hanken Grotesk', sans-serif" font-weight="500" font-size="30" fill="#9FD0BF">Built well · hosted free on Google Workspace · owned by you</text>
+</svg>
