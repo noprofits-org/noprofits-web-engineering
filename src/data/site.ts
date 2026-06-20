@@ -3,7 +3,7 @@
 // =============================================================================
 
 /** Canonical public origin. Used for sitemap + Open Graph absolute URLs. */
-export const SITE_URL = 'https://www.noprofits.org';
+export const SITE_URL = 'https://site.noprofits.org';
 
 export const SITE_NAME = 'noprofits.org';
 
