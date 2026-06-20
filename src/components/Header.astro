@@ -48,6 +48,7 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap; /* lets the open nav (order:3, width:100%) drop to its own row */
     gap: 16px;
     padding-top: 14px;
     padding-bottom: 14px;
@@ -148,7 +149,11 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     order: 3; /* drop below the bar */
     padding: 8px 0 6px;
   }
-  .np-nav.is-open { display: flex; }
+  .np-nav.is-open {
+    display: flex;
+    margin-top: 6px;
+    border-top: 1px solid #e7e1d6;
+  }
   .np-nav__link {
     text-decoration: none;
     color: var(--slate);
@@ -164,7 +169,8 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
   /* Medium+: inline nav, hide hamburger + the duplicate panel behavior. */
   @media (min-width: 900px) {
     .np-header__toggle { display: none; }
-    .np-nav {
+    .np-nav,
+    .np-nav.is-open {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -172,6 +178,8 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
       width: auto;
       order: 0;
       padding: 0;
+      margin-top: 0;
+      border-top: 0;
     }
     .np-nav__link {
       font-size: 15px;
