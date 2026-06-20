@@ -55,8 +55,8 @@ form in demo mode whenever the env var is unset (local dev, forks).
 **GitHub UI** — Settings ▸ Secrets and variables ▸ Actions ▸ **Variables** ▸ add
 `PUBLIC_FORM_ENDPOINT` = the deployed `/exec` URL.
 
-**Local dev** — put it in a gitignored `.env` (`.gitignore` already covers
-`.env*`), or leave unset to stay in demo mode.
+**Local dev** — put it in a gitignored `.env` (`.gitignore` covers `.env` and
+`.env.*`), or leave unset to stay in demo mode.
 
 ## Out of scope
 

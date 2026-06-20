@@ -24,7 +24,7 @@ const serviceLd = {
   name: 'Free and low-cost websites for non-profits',
   serviceType: 'Website design, build, and hosting for non-profit organizations',
   description: SITE_DESCRIPTION,
-  areaServed: AREA_SERVED,
+  areaServed: { '@type': 'AdministrativeArea', name: AREA_SERVED },
   provider: {
     '@type': 'Organization',
     name: SITE_NAME,
@@ -44,7 +44,7 @@ const serviceLd = {
 
   <main id="main">
     <!-- ============ HERO ============ -->
-    <section id="top" class="np-hero">
+    <section id="top" class="np-hero" tabindex="-1">
       <div class="np-container np-hero__grid">
         <div class="np-hero__copy">
           <span class="np-badge">
@@ -86,6 +86,7 @@ const serviceLd = {
 
     <!-- ============ VALUE PILLARS ============ -->
     <section class="np-pillars">
+      <h2 class="np-visually-hidden">Why non-profits choose us</h2>
       <div class="np-container np-pillars__grid">
         <div class="np-pillar">
           <div class="np-pillar__num">$0</div>
@@ -106,7 +107,7 @@ const serviceLd = {
     </section>
 
     <!-- ============ HOW IT WORKS ============ -->
-    <section id="how" class="np-section">
+    <section id="how" class="np-section" tabindex="-1">
       <div class="np-container">
         <p class="np-eyebrow">How it works</p>
         <h2 class="np-h2 np-how__h2">From conversation to launch, usually in a couple of weeks.</h2>
@@ -136,7 +137,7 @@ const serviceLd = {
     </section>
 
     <!-- ============ FEATURES ============ -->
-    <section id="features" class="np-features">
+    <section id="features" class="np-features" tabindex="-1">
       <div class="np-container">
         <div class="np-panel">
           <p class="np-eyebrow">What you get</p>
@@ -160,7 +161,7 @@ const serviceLd = {
             <div class="np-feature">
               <span class="np-feature__mark np-feature__mark--accent" aria-hidden="true"></span>
               <h3 class="np-h3 np-feature__h">Printable forms &amp; flyers</h3>
-              <p class="np-feature__p">Host intake forms, volunteer sign-ups, event flyers, and registration sheets right on your site — anyone can print a clean copy on demand. No copier runs, never out of date.</p>
+              <p class="np-feature__p">Host intake forms, sign-ups, and flyers on your site — anyone can print a clean, current copy on demand.</p>
             </div>
             <div class="np-feature">
               <span class="np-feature__mark np-feature__mark--circle" aria-hidden="true"></span>
@@ -208,7 +209,7 @@ const serviceLd = {
     </section>
 
     <!-- ============ GUIDES ============ -->
-    <section id="guides" class="np-guides np-section">
+    <section id="guides" class="np-guides np-section" tabindex="-1">
       <div class="np-container">
         <div class="np-guides__head">
           <div>
@@ -219,7 +220,7 @@ const serviceLd = {
         </div>
         <div class="np-grid np-grid--3 np-guides__grid">
           <a href="/guides/launch-free-on-google-workspace/" class="np-guidecard">
-            <div class="np-guidecard__cover" aria-hidden="true"><span>guide cover</span></div>
+            <img class="np-guidecard__cover" src="/guides/cover-launch.svg" alt="" width="1200" height="675" loading="lazy" />
             <div class="np-guidecard__body">
               <span class="np-guidecard__kicker">SETUP</span>
               <h3 class="np-guidecard__h">Launch your site free on Google Workspace</h3>
@@ -228,7 +229,7 @@ const serviceLd = {
             </div>
           </a>
           <a href="/guides/seo-basics-for-nonprofits/" class="np-guidecard">
-            <div class="np-guidecard__cover" aria-hidden="true"><span>guide cover</span></div>
+            <img class="np-guidecard__cover" src="/guides/cover-seo.svg" alt="" width="1200" height="675" loading="lazy" />
             <div class="np-guidecard__body">
               <span class="np-guidecard__kicker">VISIBILITY</span>
               <h3 class="np-guidecard__h">Get found on Google: SEO basics</h3>
@@ -237,7 +238,7 @@ const serviceLd = {
             </div>
           </a>
           <a href="/guides/forms-that-email-you/" class="np-guidecard">
-            <div class="np-guidecard__cover" aria-hidden="true"><span>guide cover</span></div>
+            <img class="np-guidecard__cover" src="/guides/cover-webforms.svg" alt="" width="1200" height="675" loading="lazy" />
             <div class="np-guidecard__body">
               <span class="np-guidecard__kicker">FORMS</span>
               <h3 class="np-guidecard__h">Collect inquiries with a form that emails you</h3>
@@ -250,7 +251,7 @@ const serviceLd = {
     </section>
 
     <!-- ============ CONTACT ============ -->
-    <section id="contact" class="np-section">
+    <section id="contact" class="np-section" tabindex="-1">
       <div class="np-container np-contact__grid">
         <div class="np-contact__intro">
           <p class="np-eyebrow">Start your site</p>
@@ -286,7 +287,10 @@ const serviceLd = {
     padding-top: 48px;
     padding-bottom: 56px;
   }
-  .np-hero__copy { animation: npFadeUp 0.7s ease both; }
+  /* Transform-only (no opacity) so the LCP H1 paints at full opacity on the
+     first frame — fading it from 0 deferred LCP. The card below the fold keeps
+     the opacity fade. */
+  .np-hero__copy { animation: npRiseUp 0.7s ease both; }
   .np-hero__card { animation: npFadeUp 0.7s ease 0.1s both; }
   .np-badge {
     display: inline-flex;
@@ -310,6 +314,10 @@ const serviceLd = {
     text-wrap: pretty;
   }
   .np-h1-sub strong { color: var(--ink); }
+  @media (min-width: 900px) {
+    /* Match the lead-paragraph scale (17→19px) per the type spec. */
+    .np-h1-sub { font-size: 19px; }
+  }
   .np-hero__ctas {
     display: flex;
     flex-wrap: wrap;
@@ -533,12 +541,12 @@ const serviceLd = {
   .np-guidecard:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -22px rgba(20, 40, 33, 0.4); }
   .np-guidecard__cover {
     aspect-ratio: 16 / 9;
-    background: repeating-linear-gradient(135deg, #e4eef0, #e4eef0 11px, #dae8ea 11px, #dae8ea 22px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    background: var(--sky-tint);
+    border-bottom: 1px solid var(--border);
   }
-  .np-guidecard__cover span { font-family: monospace; font-size: 11px; color: var(--muted); }
   .np-guidecard__body { padding: 22px 22px 24px; }
   .np-guidecard__kicker { font-family: monospace; font-size: 12px; color: var(--accent-deep); }
   .np-guidecard__h {

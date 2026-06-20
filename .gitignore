@@ -8,9 +8,10 @@ node_modules/
 # astro
 .astro/
 
-# environment
+# environment (covers .env, .env.local, .env.production, .env.*.local, etc.)
 .env
-.env.production
+.env.*
+!.env.example
 
 # clasp OAuth credentials (refresh token) — never commit
 .clasprc.json

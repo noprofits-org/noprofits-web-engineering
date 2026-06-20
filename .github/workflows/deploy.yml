@@ -11,13 +11,18 @@ name: Deploy to Firebase Hosting
 #      (iamcredentials is required for WIF→SA impersonation or firebase-tools
 #       fails with a misleading "have you run firebase login?")
 #   2. Create a deploy service account with roles/firebasehosting.admin.
-#   3. Create a WIF pool+provider bound by attribute.repository to
-#      noprofits-org/noprofits-web-engineering only.
+#   3. Create a WIF pool+provider bound to noprofits-org/noprofits-web-engineering.
+#      Pin the trust to the protected branch — add an attribute condition
+#      `assertion.ref == 'refs/heads/main'` (and `assertion.repository_owner ==
+#      'noprofits-org'`) so only main can mint the deploy credential, not any
+#      branch via workflow_dispatch. (The job-level `if` below is the in-repo
+#      half of this; the provider condition is the authoritative half.)
 #   4. Grant the repo principalSet roles/iam.workloadIdentityUser on the SA.
 #   5. Set repo VARIABLES (Settings ▸ Secrets and variables ▸ Actions ▸ Variables):
-#         GCP_WIF_PROVIDER = projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
-#         GCP_DEPLOY_SA    = <sa>@noprofits-web.iam.gserviceaccount.com
-# These are non-secret identifiers; security comes from the pool's repo binding.
+#         GCP_WIF_PROVIDER    = projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
+#         GCP_DEPLOY_SA       = <sa>@noprofits-web.iam.gserviceaccount.com
+#         PUBLIC_FORM_ENDPOINT = the deployed Apps Script /exec URL
+# These are non-secret identifiers; security comes from the pool's repo+ref binding.
 
 on:
   push:
@@ -28,13 +33,24 @@ permissions:
   contents: read
   id-token: write   # required for WIF
 
+# One deploy at a time; a newer push cancels an in-flight run so an older build
+# can't land after a newer one.
+concurrency:
+  group: deploy-hosting
+  cancel-in-progress: true
+
 jobs:
   deploy:
+    # Only main may deploy — blocks workflow_dispatch from an arbitrary branch
+    # receiving the id-token. (Pair with the provider's assertion.ref condition.)
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # Actions are pinned to full commit SHAs (not mutable tags); the trailing
+      # comment records the human-readable version. Bump via Dependabot.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -46,14 +62,16 @@ jobs:
           # it ships in the client bundle). Build guard fails if unset/placeholder.
           PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
 
+      # Install tooling (pinned) BEFORE the credential-exporting auth step, so a
+      # compromised firebase-tools release can't run with ADC in scope.
+      - run: npm install -g firebase-tools@15.22.0
+
       - id: auth
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed # v2
         with:
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_DEPLOY_SA }}
           export_environment_variables: true
-
-      - run: npm install -g firebase-tools
 
       - name: Deploy
         # firebase-tools reads ADC from the auth step's credentials file and

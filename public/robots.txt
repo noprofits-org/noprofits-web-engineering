@@ -1,6 +1,11 @@
 # noprofits.org — public marketing site (indexable).
-# PRE-LAUNCH: to de-index before going live, replace "Allow: /" with
-# "Disallow: /" below AND uncomment the noindex meta in BaseLayout.astro.
+# PRE-LAUNCH de-index — pick ONE, never both:
+#   (A) Block crawling: set "Disallow: /" below. Fast, but URLs already linked
+#       elsewhere can still appear as URL-only results.
+#   (B) Guarantee removal: keep "Allow: /" and uncomment the noindex meta in
+#       BaseLayout.astro. The crawler must fetch the page to read noindex.
+# Do NOT combine them: a Disallowed page is never fetched, so its noindex is
+# never seen — the worst of both.
 User-agent: *
 Allow: /
 

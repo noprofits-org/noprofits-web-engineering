@@ -127,6 +127,26 @@ img { max-width: 100%; height: auto; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Transform-only entrance for above-the-fold LCP elements — never animate
+   opacity from 0 on the LCP, or its paint (and the LCP timestamp) is deferred. */
+@keyframes npRiseUp {
+  from { transform: translateY(14px); }
+  to { transform: translateY(0); }
+}
+
+/* Visually hidden but available to screen readers / the document outline. */
+.np-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* -----------------------------------------------------------------------------
    Container — fluid with side padding on mobile, fixed + centered at Large.
    Side padding: 20px base → 28px Small → 32px Medium.

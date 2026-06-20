@@ -1,5 +1,5 @@
 ---
-import { PHONE_DISPLAY, PHONE_TEL, FORM_ENDPOINT, isRealEndpoint } from '../data/site.ts';
+import { PHONE_DISPLAY, PHONE_TEL, EMAIL } from '../data/site.ts';
 
 interface Props {
   /** "hero" = compact 4-field card form; "contact" = full form with address/message. */
@@ -15,20 +15,19 @@ const id = (field: string) => `${ns}-${field}`;
 ---
 
 <div class="np-form-wrap" data-form-root>
-  <form
-    class="np-form"
-    data-np-form
-    data-endpoint={FORM_ENDPOINT}
-    data-real-endpoint={String(isRealEndpoint)}
-  >
+  <form class="np-form" data-np-form>
     {/* Honeypot — visually hidden, off-screen, not tabbable, not announced.
-        A future Apps Script silently drops any submission where this is filled. */}
+        Named "np_hp" (not company/organization) so password managers don't
+        autofill it and false-flag a real visitor. The Apps Script drops any
+        submission where this is filled. */}
     <div class="np-honeypot" aria-hidden="true">
       <label>
-        Company
-        <input type="text" name="company" tabindex="-1" autocomplete="off" />
+        Leave this field empty
+        <input type="text" name="np_hp" tabindex="-1" autocomplete="off" />
       </label>
     </div>
+
+    <p class="np-form__legend"><span class="np-req">*</span> Required fields.</p>
 
     {isHero ? (
       <>
@@ -87,6 +86,10 @@ const id = (field: string) => `${ns}-${field}`;
     )}
   </form>
 
+  <noscript>
+    <p class="np-form__noscript">This form needs JavaScript to send. To reach us directly, call <a href={`tel:${PHONE_TEL}`}>{PHONE_DISPLAY}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+  </noscript>
+
   {/* Inline success state — swapped in by JS on submit (no page reload).
       role="status" + aria-live announce it; tabindex=-1 lets JS move focus here. */}
   <div class="np-success" data-np-success hidden role="status" aria-live="polite" tabindex="-1">
@@ -94,13 +97,13 @@ const id = (field: string) => `${ns}-${field}`;
       <>
         <div class="np-success__check" aria-hidden="true">✓</div>
         <h3 class="np-success__title np-success__title--sm">You're on your way.</h3>
-        <p class="np-success__copy">We've got your details and we'll reach out shortly to start building your site.</p>
+        <p class="np-success__copy">We've got your details and we'll reach out shortly to start building your site. If you don't hear from us within a few business days, email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
       </>
     ) : (
       <>
         <div class="np-success__check np-success__check--lg" aria-hidden="true">✓</div>
         <h3 class="np-success__title">Thank you — we've got it.</h3>
-        <p class="np-success__copy">Your details are on their way to our team. We'll reach out within a couple of business days to talk about your site.</p>
+        <p class="np-success__copy">Your details are on their way to our team. We'll reach out within a couple of business days to talk about your site. If you don't hear from us, email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
       </>
     )}
   </div>
@@ -118,6 +121,23 @@ const id = (field: string) => `${ns}-${field}`;
   @media (min-width: 600px) {
     .np-form__pair { grid-template-columns: 1fr 1fr; gap: 18px; }
   }
+
+  .np-form__legend {
+    margin: 4px 0 18px;
+    color: var(--faint);
+    font-size: 13px;
+  }
+  .np-form__noscript {
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--sky-tint);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .np-form__noscript a,
+  .np-success__copy a { color: var(--accent-deep); font-weight: 600; }
 
   .np-form__submit { margin-top: 22px; }
   .np-form__note {
@@ -220,9 +240,12 @@ const id = (field: string) => `${ns}-${field}`;
       // Native validation — required name/org/email/phone, email + tel formats.
       if (!form.reportValidity()) return;
 
-      // Honeypot: if a bot filled "company", silently no-op (mirror real drop).
-      const hp = form.querySelector<HTMLInputElement>('input[name="company"]');
-      if (hp && hp.value.trim() !== '') return;
+      // Honeypot: if "np_hp" is filled it's almost certainly a bot. Show the
+      // normal success state (don't POST) rather than a silent no-op, so a bot
+      // is fooled and the (now near-zero, non-autofill name) false positive
+      // isn't left staring at a dead form.
+      const hp = form.querySelector<HTMLInputElement>('input[name="np_hp"]');
+      if (hp && hp.value.trim() !== '') { showSuccess(); return; }
 
       // Preview mode (placeholder endpoint): be honest — nothing was sent.
       // The production build guard prevents this state from ever shipping live.
@@ -234,7 +257,22 @@ const id = (field: string) => `${ns}-${field}`;
       // Real submit. no-cors means the response is opaque (we can't read status),
       // but the promise still REJECTS on a true network failure — the most
       // damaging case. Only show success once the request actually settles.
-      if (submitBtn) submitBtn.disabled = true;
+      // In-flight state: disable + announce + swap the label so a slow network
+      // shows progress instead of a dead-looking greyed button.
+      let prevLabel = '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.setAttribute('aria-busy', 'true');
+        prevLabel = submitBtn.textContent || '';
+        submitBtn.textContent = 'Sending…';
+      }
+      const restoreBtn = () => {
+        if (!submitBtn) return;
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute('aria-busy');
+        submitBtn.textContent = prevLabel;
+      };
+
       fetch(FORM_ENDPOINT, {
         method: 'POST',
         mode: 'no-cors',
@@ -244,7 +282,7 @@ const id = (field: string) => `${ns}-${field}`;
           showSuccess();
         })
         .catch(() => {
-          if (submitBtn) submitBtn.disabled = false;
+          restoreBtn();
           showNotice(`We couldn’t send that just now — ${reachUs}`);
         });
     });

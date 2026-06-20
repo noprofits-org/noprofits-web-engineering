@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
 import sitemap from '@astrojs/sitemap';
 import { SITE_URL } from './src/data/site.ts';
 
@@ -14,7 +15,11 @@ const formEndpointGuard = {
   name: 'np:form-endpoint-guard',
   hooks: {
     'astro:build:start': () => {
-      const endpoint = process.env.PUBLIC_FORM_ENDPOINT || '';
+      // Read OS env AND .env files (loadEnv), matching what Astro/Vite inject
+      // into import.meta.env — so a local prod build that sets the endpoint via
+      // a .env file isn't falsely blocked.
+      const fileEnv = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), 'PUBLIC_');
+      const endpoint = process.env.PUBLIC_FORM_ENDPOINT || fileEnv.PUBLIC_FORM_ENDPOINT || '';
       const isRealEndpoint = endpoint.startsWith('https://script.google.com');
       if (!isRealEndpoint && process.env.ALLOW_PLACEHOLDER_ENDPOINT !== 'true') {
         throw new Error(

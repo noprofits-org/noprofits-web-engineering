@@ -28,9 +28,9 @@ const GUIDES = [
 const others = GUIDES.filter((g) => g.slug !== current);
 ---
 
-<aside class="np-guidecta np-noprint">
+<aside class="np-guidecta np-noprint" aria-labelledby="np-guidecta-title">
   <div class="np-guidecta__conv">
-    <h2 class="np-guidecta__h">Want this built for you — free?</h2>
+    <h2 class="np-guidecta__h" id="np-guidecta-title">Want this built for you — free?</h2>
     <p class="np-guidecta__p">
       We design, build, and set up sites like this for non-profits across greater Seattle at no
       cost. Tell us about yours and we'll take it from here.
@@ -39,8 +39,8 @@ const others = GUIDES.filter((g) => g.slug !== current);
   </div>
 
   <div class="np-guidecta__more">
-    <p class="np-guidecta__morehead">More free guides</p>
-    <ul class="np-guidecta__list">
+    <h2 class="np-guidecta__morehead" id="np-guidecta-more">More free guides</h2>
+    <ul class="np-guidecta__list" aria-labelledby="np-guidecta-more">
       {others.map((g) => (
         <li>
           <a href={`/guides/${g.slug}/`} class="np-guidecta__link">

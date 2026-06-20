@@ -21,12 +21,10 @@ export const AREA_SERVED = 'Greater Seattle and the Puget Sound region';
 /**
  * Social-share card path (emitted as an absolute URL in og:image/twitter:image).
  *
- * Currently points at the SVG so a REAL, resolvable file ships today (better
- * than a 404 PNG). LAUNCH UPGRADE: rasterize `public/og-image.svg` →
- * `public/og-image.png` (1200×630) and flip this to '/og-image.png' — a few
- * scrapers (Facebook, some LinkedIn) prefer/require PNG/JPG over SVG.
+ * PNG (1200×630) because Facebook/LinkedIn/X silently drop SVG og:images.
+ * Rasterized from `public/og-image.svg` (the SVG is kept as the editable source).
  */
-export const OG_IMAGE_PATH = '/og-image.svg';
+export const OG_IMAGE_PATH = '/og-image.png';
 
 // -----------------------------------------------------------------------------
 // FORM_ENDPOINT — the single shared submission target for BOTH forms.

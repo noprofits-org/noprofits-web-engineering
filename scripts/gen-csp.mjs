@@ -32,6 +32,19 @@ function inlineScriptHashes() {
   const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/g;
   for (const file of htmlFiles(DIST)) {
     const html = readFileSync(file, 'utf8');
+    // Guard: this is a regex hasher, not a real HTML parser. A literal
+    // </script> inside an inline body would truncate the hashed content and
+    // ship a CSP hash that doesn't match the real script (silently breaking it).
+    // Unbalanced <script>/</script> tag counts catch that case — fail loudly.
+    const opens = (html.match(/<script\b/gi) || []).length;
+    const closes = (html.match(/<\/script>/gi) || []).length;
+    if (opens !== closes) {
+      throw new Error(
+        `[gen-csp] ${file}: <script> (${opens}) / </script> (${closes}) tag count ` +
+          `mismatch — an inline body likely contains a literal "</script>". The regex ` +
+          `hasher would truncate it; use a real HTML parser or avoid the literal.`
+      );
+    }
     let m;
     while ((m = re.exec(html))) {
       const [, attrs, body] = m;
