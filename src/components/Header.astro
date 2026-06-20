@@ -59,6 +59,7 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     text-decoration: none;
     color: var(--ink);
     margin-right: auto;
+    min-width: 0; /* let the row compute tight widths on small phones */
   }
   .np-brandmark {
     width: 30px;
@@ -78,6 +79,16 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../data/site.ts';
     font-weight: 700;
     font-size: 20px;
     letter-spacing: -0.01em;
+    white-space: nowrap; /* never break "noprofits.org" across two lines */
+  }
+
+  /* Narrow phones: compact the bar so brand + phone + toggle fit on one line
+     (the pill is rigid via flex:none/nowrap, so give the space back here). */
+  @media (max-width: 400px) {
+    .np-header__bar { gap: 10px; }
+    .np-wordmark { font-size: 18px; }
+    .np-header__phone { padding: 8px 10px; font-size: 14px; }
+    .np-header__phone .np-dot { display: none; }
   }
   .np-wordmark__tld { color: var(--accent); }
 

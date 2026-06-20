@@ -1,7 +1,10 @@
 /* Self-hosted variable fonts (latin subset) — replaces the render-blocking
    Google Fonts stylesheet. One variable file per family, served same-origin
-   from /public/fonts and cached immutable via firebase.json. To refresh:
-   re-run the latin-subset download and overwrite the two woff2 files. */
+   from /public/fonts. Cache policy (firebase.json) is 7-day max-age + 30-day
+   stale-while-revalidate (NOT immutable — the filenames aren't content-hashed).
+   To refresh: a font swap is only seen immediately if you BUMP THE FILENAME
+   (e.g. bricolage-grotesque-v2.woff2) and update the @font-face src + both
+   preload hrefs together. Overwriting in place leaves cached visitors stale. */
 @font-face {
   font-family: 'Bricolage Grotesque';
   font-style: normal;
@@ -116,6 +119,8 @@ body {
   background: var(--cream);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  /* Safety net: never allow a tight element to force horizontal scroll. */
+  overflow-x: hidden;
 }
 
 img { max-width: 100%; height: auto; }

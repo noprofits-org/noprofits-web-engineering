@@ -22,7 +22,9 @@ export const AREA_SERVED = 'Greater Seattle and the Puget Sound region';
  * Social-share card path (emitted as an absolute URL in og:image/twitter:image).
  *
  * PNG (1200×630) because Facebook/LinkedIn/X silently drop SVG og:images.
- * Rasterized from `public/og-image.svg` (the SVG is kept as the editable source).
+ * Editable source lives in `design-reference/og-image.svg` (kept OUT of public/
+ * so only the PNG ships). To regenerate:
+ *   rsvg-convert -w 1200 -h 630 design-reference/og-image.svg -o public/og-image.png
  */
 export const OG_IMAGE_PATH = '/og-image.png';
 
