@@ -9,4 +9,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://noprofits.org/sitemap-index.xml
+Sitemap: https://www.noprofits.org/sitemap-index.xml
