@@ -2,167 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE_NAME } from '../data/site.ts';
-import stats from '../data/stats.json';
+import { SITE_NAME, DASH_URL, hasDashboard } from '../data/site.ts';
 
 const title = 'Live site stats (a demo) | noprofits.org';
 const description =
-  'A live, public demonstration of the private, cookieless analytics we build into every site — page views, visits, inquiries, and phone clicks, with no third-party tracking.';
+  'A live demonstration of the private, cookieless analytics we build into every site — page views, visits, inquiries, and phone clicks, with no third-party tracking.';
 const path = '/stats/';
-
-// ---- Pull the baked data (see scripts/fetch-stats.mjs) ----------------------
-type Day = { date: string; pageview: number; visits: number; form_submit: number; tel_click: number };
-const totals = stats.totals ?? { pageview: 0, visits: 0, form_submit: 0, tel_click: 0 };
-const daily: Day[] = (stats.daily ?? []) as Day[];
-const referrers: { host: string; count: number }[] = stats.referrers ?? [];
-const isSeed = stats.source !== 'live';
-const hasData = daily.length > 0 && totals.visits > 0;
-
-// ---- Derived, at-a-glance metrics -------------------------------------------
-const safeDiv = (a: number, b: number) => (b > 0 ? a / b : 0);
-const pageviews = totals.pageview ?? 0;
-const visits = totals.visits ?? 0;
-const inquiries = totals.form_submit ?? 0;
-const calls = totals.tel_click ?? 0;
-const contacts = inquiries + calls;
-
-const pagesPerVisit = safeDiv(pageviews, visits);
-const inquiryRate = safeDiv(inquiries, visits) * 100;
-const callRate = safeDiv(calls, visits) * 100;
-const contactRate = safeDiv(contacts, visits) * 100;
-const avgVisitsPerDay = safeDiv(visits, daily.length);
-
-// Peak traffic day — the kind of thing a campaign makes pop on the chart.
-const peak = daily.reduce<Day | null>((best, d) => (!best || d.visits > best.visits ? d : best), null);
-
-// ---- Formatting helpers ------------------------------------------------------
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const utc = (iso: string) => new Date(iso + 'T00:00:00Z');
-const num = (n: number) => n.toLocaleString('en-US');
-const dec = (n: number, p = 1) => n.toFixed(p);
-const longDate = (iso: string) => {
-  const d = utc(iso);
-  return `${MONTHS_LONG[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
-};
-const generatedAt = stats.generatedAt ? longDate(stats.generatedAt.slice(0, 10)) : '—';
-
-// =============================================================================
-// Tiny dependency-free SVG charting. Rendered at BUILD time → static markup,
-// so the page ships zero client JS and needs no CSP change or chart library.
-// =============================================================================
-const W = 760;
-const H = 260;
-const PAD = { t: 18, r: 16, b: 28, l: 40 };
-const innerW = W - PAD.l - PAD.r;
-const innerH = H - PAD.t - PAD.b;
-
-/** "Nice" axis max so gridlines land on round numbers. */
-function niceMax(v: number): number {
-  if (v <= 5) return 5;
-  const pow = Math.pow(10, Math.floor(Math.log10(v)));
-  const n = v / pow;
-  const step = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
-  return step * pow;
-}
-
-const xAt = (i: number, n: number) => PAD.l + (n <= 1 ? innerW / 2 : (innerW * i) / (n - 1));
-const yAt = (v: number, max: number) => PAD.t + innerH * (1 - safeDiv(v, max));
-
-/** Month boundary ticks for the x-axis. */
-function monthTicks(days: Day[]) {
-  const ticks: { i: number; label: string }[] = [];
-  let last = -1;
-  days.forEach((d, i) => {
-    const m = utc(d.date).getUTCMonth();
-    if (m !== last) {
-      ticks.push({ i, label: MONTHS[m] });
-      last = m;
-    }
-  });
-  return ticks;
-}
-
-/** Multi-series line chart (used for traffic: pageviews + visits). */
-function lineChart(days: Day[], series: { key: keyof Day; label: string; color: string }[]): string {
-  const n = days.length;
-  const max = niceMax(Math.max(1, ...days.flatMap((d) => series.map((s) => Number(d[s.key])))));
-  const grid = [0, max / 2, max];
-  const gridSvg = grid
-    .map((g) => {
-      const y = yAt(g, max);
-      return `<line x1="${PAD.l}" y1="${y.toFixed(1)}" x2="${W - PAD.r}" y2="${y.toFixed(1)}" class="np-chart__grid"/>` +
-        `<text x="${PAD.l - 8}" y="${(y + 4).toFixed(1)}" class="np-chart__ylab">${num(g)}</text>`;
-    })
-    .join('');
-  const ticksSvg = monthTicks(days)
-    .map((t) => `<text x="${xAt(t.i, n).toFixed(1)}" y="${H - 8}" class="np-chart__xlab">${t.label}</text>`)
-    .join('');
-  const linesSvg = series
-    .map((s) => {
-      const pts = days.map((d, i) => `${xAt(i, n).toFixed(1)},${yAt(Number(d[s.key]), max).toFixed(1)}`).join(' ');
-      return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-    })
-    .join('');
-  return `<svg viewBox="0 0 ${W} ${H}" class="np-chart__svg" role="img" preserveAspectRatio="xMidYMid meet">${gridSvg}${linesSvg}${ticksSvg}</svg>`;
-}
-
-/** Stacked daily bars (used for engagement: inquiries + phone clicks). */
-function stackChart(days: Day[], series: { key: keyof Day; label: string; color: string }[]): string {
-  const n = days.length;
-  const max = niceMax(Math.max(1, ...days.map((d) => series.reduce((a, s) => a + Number(d[s.key]), 0))));
-  const grid = [0, max];
-  const gridSvg = grid
-    .map((g) => {
-      const y = yAt(g, max);
-      return `<line x1="${PAD.l}" y1="${y.toFixed(1)}" x2="${W - PAD.r}" y2="${y.toFixed(1)}" class="np-chart__grid"/>` +
-        `<text x="${PAD.l - 8}" y="${(y + 4).toFixed(1)}" class="np-chart__ylab">${num(g)}</text>`;
-    })
-    .join('');
-  const ticksSvg = monthTicks(days)
-    .map((t) => `<text x="${xAt(t.i, n).toFixed(1)}" y="${H - 8}" class="np-chart__xlab">${t.label}</text>`)
-    .join('');
-  const bw = Math.max(2, (innerW / n) * 0.7);
-  const barsSvg = days
-    .map((d, i) => {
-      const x = xAt(i, n) - bw / 2;
-      let yTop = PAD.t + innerH;
-      return series
-        .map((s) => {
-          const v = Number(d[s.key]);
-          if (v <= 0) return '';
-          const h = (innerH * v) / max;
-          yTop -= h;
-          return `<rect x="${x.toFixed(1)}" y="${yTop.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${s.color}"/>`;
-        })
-        .join('');
-    })
-    .join('');
-  return `<svg viewBox="0 0 ${W} ${H}" class="np-chart__svg" role="img" preserveAspectRatio="xMidYMid meet">${gridSvg}${barsSvg}${ticksSvg}</svg>`;
-}
-
-const C = { pageview: '#2F7DA3', visits: '#5B9FC0', inquiry: '#1C5572', call: '#9FD0BF' };
-const trafficSvg = hasData
-  ? lineChart(daily, [
-      { key: 'pageview', label: 'Page views', color: C.pageview },
-      { key: 'visits', label: 'Visits', color: C.visits },
-    ])
-  : '';
-const engagementSvg = hasData
-  ? stackChart(daily, [
-      { key: 'form_submit', label: 'Inquiries', color: C.inquiry },
-      { key: 'tel_click', label: 'Phone clicks', color: C.call },
-    ])
-  : '';
-
-const cards = [
-  { label: 'Visits', value: num(visits), note: 'distinct browser sessions' },
-  { label: 'Page views', value: num(pageviews), note: `${dec(pagesPerVisit)} pages per visit` },
-  { label: 'Inquiries', value: num(inquiries), note: `${dec(inquiryRate)}% of visits` },
-  { label: 'Phone clicks', value: num(calls), note: `${dec(callRate)}% of visits` },
-  { label: 'Total contacts', value: num(contacts), note: `${dec(contactRate)}% reach out` },
-  { label: 'Avg / day', value: dec(avgVisitsPerDay), note: `over ${daily.length} days` },
-];
 ---
 
 <BaseLayout title={title} description={description} path={path}>
@@ -170,102 +15,36 @@ const cards = [
   <main id="main" class="np-stats">
     <div class="np-container np-stats__inner">
       <p class="np-eyebrow">Live demo</p>
-      <h1 class="np-stats__h1">Our own numbers, in the open</h1>
+      <h1 class="np-stats__h1">See the analytics, live</h1>
 
       <div class="np-stats__callout">
         <p class="np-stats__callout-p">
-          This page is a <strong>live demonstration</strong> of the private analytics we build into
-          every {SITE_NAME} site. For your organization these figures are <strong>private by
-          default</strong> &mdash; visible only to you, in your own Google Sheet. We publish ours
-          here so you can see the real feature working: anonymous, aggregate counts with
-          <strong>no cookies, no Google Analytics, and no third parties</strong> tracking anyone.
+          Every {SITE_NAME} site can quietly measure whether it's working &mdash; how many people
+          visit, where they come from, and how many reach out. For your organization those figures
+          are <strong>private by default</strong>, visible only to you in your own Google Sheet. To
+          prove the feature is real, we publish <strong>our own</strong> numbers on a live dashboard.
         </p>
       </div>
 
-      {isSeed && (
-        <p class="np-stats__badge">
-          Demonstration data &mdash; live figures begin once a site is deployed with analytics switched on.
+      <p class="np-stats__lead">
+        It's anonymous and aggregate &mdash; page views, visits, inquiry-form submissions, and phone
+        clicks &mdash; with <strong>no cookies, no Google Analytics, and no third parties</strong>
+        tracking anyone. The dashboard reads straight from the sheet, so it's always current.
+      </p>
+
+      {hasDashboard ? (
+        <p class="np-stats__cta-wrap">
+          <a class="np-stats__cta" href={DASH_URL} target="_blank" rel="noopener">Open the live dashboard →</a>
+          <span class="np-stats__cta-note">Opens in a new tab. You'll be asked to sign in with a Google account &mdash; a light screen that keeps bots out; we never see who you are.</span>
         </p>
-      )}
-
-      {hasData ? (
-        <>
-          <section class="np-stats__cards" aria-label="Key metrics">
-            {cards.map((c) => (
-              <div class="np-statcard">
-                <span class="np-statcard__value">{c.value}</span>
-                <span class="np-statcard__label">{c.label}</span>
-                <span class="np-statcard__note">{c.note}</span>
-              </div>
-            ))}
-          </section>
-
-          <section class="np-chart" aria-label="Traffic over time">
-            <div class="np-chart__head">
-              <h2 class="np-stats__h2">Traffic over time</h2>
-              <div class="np-chart__legend">
-                <span class="np-chart__key"><span class="np-chart__swatch" style={`background:${C.pageview}`}></span>Page views</span>
-                <span class="np-chart__key"><span class="np-chart__swatch" style={`background:${C.visits}`}></span>Visits</span>
-              </div>
-            </div>
-            <Fragment set:html={trafficSvg} />
-            <p class="np-chart__cap">
-              Daily page views and distinct visits.
-              {peak && <> Busiest day: <strong>{longDate(peak.date)}</strong> ({num(peak.visits)} visits) &mdash; the kind of lift a campaign or a news mention creates.</>}
-            </p>
-          </section>
-
-          <section class="np-chart" aria-label="Inquiries and phone clicks over time">
-            <div class="np-chart__head">
-              <h2 class="np-stats__h2">People reaching out</h2>
-              <div class="np-chart__legend">
-                <span class="np-chart__key"><span class="np-chart__swatch" style={`background:${C.inquiry}`}></span>Inquiries</span>
-                <span class="np-chart__key"><span class="np-chart__swatch" style={`background:${C.call}`}></span>Phone clicks</span>
-              </div>
-            </div>
-            <Fragment set:html={engagementSvg} />
-            <p class="np-chart__cap">
-              Genuine form submissions and taps on the phone number, per day. These are the events that
-              turn a visitor into a conversation &mdash; the whole reason the site exists.
-            </p>
-          </section>
-
-          {referrers.length > 0 && (
-            <section class="np-chart" aria-label="Top sources">
-              <h2 class="np-stats__h2">Where visitors come from</h2>
-              <ul class="np-sources">
-                {referrers.map((r) => {
-                  const pct = safeDiv(r.count, referrers[0].count) * 100;
-                  return (
-                    <li class="np-source">
-                      <span class="np-source__host">{r.host}</span>
-                      <span class="np-source__bar"><span class="np-source__fill" style={`width:${Math.max(4, pct)}%`}></span></span>
-                      <span class="np-source__count">{num(r.count)}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-              <p class="np-chart__cap">
-                Only the referring site's domain is ever recorded &mdash; never a full web address, and
-                never anything about the person.
-              </p>
-            </section>
-          )}
-        </>
       ) : (
-        <div class="np-stats__empty">
-          <h2 class="np-stats__h2">Collecting data</h2>
-          <p class="np-stats__callout-p">
-            No events have been recorded yet. Once this site is deployed with analytics switched on,
-            page views, visits, inquiries, and phone clicks will appear here &mdash; updated each day.
-          </p>
-        </div>
+        <p class="np-stats__lead"><em>The live dashboard isn't connected yet &mdash; check back soon.</em></p>
       )}
 
       <p class="np-stats__foot">
-        Updated {generatedAt}. Figures are anonymous and aggregate &mdash; no name, email, message, or
-        cross-site identifier is ever part of this data. Read the <a href="/privacy/">privacy policy</a>
-        for exactly what is and isn't collected.
+        Figures are anonymous and aggregate &mdash; no name, email, message, or cross-site identifier
+        is ever part of this data. Read the <a href="/privacy/">privacy policy</a> for exactly what
+        is and isn't collected.
       </p>
     </div>
   </main>
@@ -274,7 +53,7 @@ const cards = [
 
   <style>
     .np-stats { background: #e9ece8; min-height: 100vh; padding: 0 0 56px; }
-    .np-stats__inner { max-width: 880px; padding-top: 40px; padding-bottom: 0; }
+    .np-stats__inner { max-width: 760px; padding-top: 40px; padding-bottom: 0; }
     .np-stats__h1 {
       font-family: 'Bricolage Grotesque', sans-serif;
       font-weight: 800;
@@ -284,14 +63,6 @@ const cards = [
       color: var(--ink);
       margin: 8px 0 0;
     }
-    .np-stats__h2 {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 700;
-      font-size: 20px;
-      color: var(--ink);
-      margin: 0;
-    }
-
     .np-stats__callout {
       margin: 22px 0 0;
       background: var(--sky-tint);
@@ -300,89 +71,25 @@ const cards = [
       padding: 20px 22px;
     }
     .np-stats__callout-p { margin: 0; font-size: 16px; line-height: 1.7; color: #2f3a34; }
+    .np-stats__lead { margin: 20px 0 0; font-size: 16px; line-height: 1.7; color: var(--slate); }
 
-    .np-stats__badge {
-      margin: 16px 0 0;
+    .np-stats__cta-wrap { margin: 28px 0 0; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .np-stats__cta {
       display: inline-block;
-      font-size: 13px;
+      background: var(--accent);
+      color: #fff;
       font-weight: 700;
-      color: #6a4b00;
-      background: #fbf0d3;
-      border: 1px solid #f0dca0;
-      border-radius: 999px;
-      padding: 7px 14px;
+      font-size: 16px;
+      text-decoration: none;
+      padding: 13px 22px;
+      border-radius: 10px;
+      min-height: 44px;
     }
-
-    /* Metric cards */
-    .np-stats__cards {
-      margin: 26px 0 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    .np-statcard {
-      background: #fff;
-      border: 1px solid #dde6e0;
-      border-radius: 14px;
-      padding: 18px 18px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .np-statcard__value {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 800;
-      font-size: 30px;
-      color: var(--accent-deep);
-      letter-spacing: -0.01em;
-    }
-    .np-statcard__label { font-weight: 700; font-size: 14px; color: var(--ink); }
-    .np-statcard__note { font-size: 13px; color: var(--faint); }
-
-    /* Chart blocks */
-    .np-chart {
-      margin: 22px 0 0;
-      background: #fff;
-      border: 1px solid #dde6e0;
-      border-radius: 16px;
-      padding: 22px 22px 18px;
-    }
-    .np-chart__head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px 16px;
-      margin-bottom: 12px;
-    }
-    .np-chart__legend { display: flex; gap: 16px; flex-wrap: wrap; }
-    .np-chart__key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--slate); font-weight: 600; }
-    .np-chart__swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-    .np-chart__svg { width: 100%; height: auto; display: block; }
-    .np-chart__grid { stroke: #e7ece9; stroke-width: 1; }
-    .np-chart__ylab { fill: var(--faint); font-size: 11px; text-anchor: end; font-family: monospace; }
-    .np-chart__xlab { fill: var(--faint); font-size: 11px; text-anchor: middle; font-family: monospace; }
-    .np-chart__cap { margin: 12px 0 0; font-size: 14px; line-height: 1.6; color: var(--slate); }
-
-    /* Sources list */
-    .np-sources { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-    .np-source { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 12px; }
-    .np-source__host { font-size: 14px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .np-source__bar { background: #eef3f0; border-radius: 999px; height: 10px; overflow: hidden; }
-    .np-source__fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
-    .np-source__count { font-size: 13px; color: var(--faint); font-family: monospace; min-width: 48px; text-align: right; }
-
-    .np-stats__empty {
-      margin: 26px 0 0;
-      background: #fff;
-      border: 1px solid #dde6e0;
-      border-radius: 16px;
-      padding: 28px 24px;
-    }
-    .np-stats__empty .np-stats__h2 { margin-bottom: 10px; }
+    .np-stats__cta:hover { background: var(--accent-deep); }
+    .np-stats__cta-note { font-size: 13px; color: var(--faint); line-height: 1.6; }
 
     .np-stats__foot {
-      margin: 28px 0 0;
+      margin: 32px 0 0;
       font-size: 13px;
       line-height: 1.7;
       color: var(--faint);
@@ -391,10 +98,6 @@ const cards = [
 
     @media (min-width: 680px) {
       .np-stats__h1 { font-size: 40px; }
-      .np-stats__cards { grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    }
-    @media (max-width: 520px) {
-      .np-source { grid-template-columns: 110px 1fr auto; gap: 8px; }
     }
   </style>
 </BaseLayout>

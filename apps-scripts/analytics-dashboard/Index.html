@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --accent: #2F7DA3; --accent-deep: #1C5572; --sky-soft: #CFE6EF; --sky-tint: #EAF3F7;
+      --ink: #16221D; --slate: #43504A; --faint: #67726B;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #e9ece8; color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased; padding: 0 0 56px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 40px 20px 0; }
+    .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0; }
+    h1 { font-size: 34px; line-height: 1.08; letter-spacing: -0.02em; margin: 8px 0 0; }
+    h2 { font-size: 20px; margin: 0; }
+
+    .callout { margin: 22px 0 0; background: var(--sky-tint); border: 1px solid var(--sky-soft); border-radius: 14px; padding: 20px 22px; }
+    .callout p { margin: 0; font-size: 16px; line-height: 1.7; color: #2f3a34; }
+
+    .cards { margin: 24px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .statcard { background: #fff; border: 1px solid #dde6e0; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 3px; }
+    .statcard__v { font-size: 30px; font-weight: 800; color: var(--accent-deep); letter-spacing: -0.01em; }
+    .statcard__l { font-weight: 700; font-size: 14px; }
+    .statcard__n { font-size: 13px; color: var(--faint); }
+
+    .card { margin: 22px 0 0; background: #fff; border: 1px solid #dde6e0; border-radius: 16px; padding: 22px; }
+    .card.empty { padding: 28px 24px; }
+    .card.empty .lead { margin: 10px 0 0; font-size: 16px; line-height: 1.7; color: var(--slate); }
+    .chart__head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 12px; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; }
+    .key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--slate); font-weight: 600; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+    .svg { width: 100%; height: auto; display: block; }
+    .grid { stroke: #e7ece9; stroke-width: 1; }
+    .ylab { fill: var(--faint); font-size: 11px; text-anchor: end; font-family: monospace; }
+    .xlab { fill: var(--faint); font-size: 11px; text-anchor: middle; font-family: monospace; }
+    .cap { margin: 12px 0 0; font-size: 14px; line-height: 1.6; color: var(--slate); }
+
+    .sources { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .source { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 12px; }
+    .source__host { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .source__bar { background: #eef3f0; border-radius: 999px; height: 10px; overflow: hidden; }
+    .source__fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+    .source__count { font-size: 13px; color: var(--faint); font-family: monospace; min-width: 48px; text-align: right; }
+
+    .foot { margin: 28px 0 0; font-size: 13px; line-height: 1.7; color: var(--faint); }
+    .foot a { color: var(--accent-deep); }
+
+    @media (min-width: 680px) {
+      h1 { font-size: 40px; }
+      .cards { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    }
+    @media (max-width: 520px) { .source { grid-template-columns: 110px 1fr auto; gap: 8px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Live · noprofits.org</p>
+    <h1>Our own numbers, in the open</h1>
+
+    <div class="callout">
+      <p>This is a <strong>live demonstration</strong> of the private analytics we build into every
+      noprofits.org site. For your organization these figures are <strong>private by default</strong>
+      &mdash; visible only to you. They're anonymous, aggregate counts with <strong>no cookies, no
+      Google Analytics, and no third parties</strong> tracking anyone.</p>
+    </div>
+
+    <?!= bodyHtml ?>
+
+    <p class="foot">Updated <?= generatedAt ?> &middot; this page reads live and refreshes on each
+    load. Figures are anonymous and aggregate &mdash; no name, email, message, or cross-site
+    identifier is ever part of this data.</p>
+  </div>
+</body>
+</html>

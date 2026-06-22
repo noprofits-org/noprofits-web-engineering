@@ -51,3 +51,15 @@ export const FORM_ENDPOINT =
  * since analytics shares the same endpoint, whether the analytics beacon fires.
  */
 export const isRealEndpoint = FORM_ENDPOINT.startsWith('https://script.google.com');
+
+// -----------------------------------------------------------------------------
+// DASH_URL — the LIVE analytics dashboard (a SEPARATE standalone Apps Script web
+// app; see apps-scripts/analytics-dashboard/). Gated "Anyone with a Google
+// account", so it's a public link, not a secret — hence the PUBLIC_ prefix.
+// Injected at build from PUBLIC_DASH_URL. When unset, the /stats page simply
+// omits the "open dashboard" button (no build failure).
+// -----------------------------------------------------------------------------
+export const DASH_URL = import.meta.env.PUBLIC_DASH_URL ?? '';
+
+/** True only when DASH_URL points at a real deployed Apps Script web app. */
+export const hasDashboard = DASH_URL.startsWith('https://script.google.com');
