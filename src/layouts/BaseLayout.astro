@@ -126,5 +126,12 @@ const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
   <body>
     <a class="np-skiplink" href="#main">Skip to content</a>
     <slot />
+
+    {/* First-party, cookieless analytics — no-ops unless PUBLIC_ANALYTICS_ENDPOINT
+        is set. Records a pageview + tel-link clicks; see src/lib/analytics.ts. */}
+    <script>
+      import { initAnalytics } from '../lib/analytics.ts';
+      initAnalytics();
+    </script>
   </body>
 </html>

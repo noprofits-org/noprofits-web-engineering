@@ -22,6 +22,8 @@ name: Deploy to Firebase Hosting
 #         GCP_WIF_PROVIDER    = projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
 #         GCP_DEPLOY_SA       = <sa>@noprofits-web.iam.gserviceaccount.com
 #         PUBLIC_FORM_ENDPOINT = the deployed Apps Script /exec URL
+#         PUBLIC_ANALYTICS_ENDPOINT = the analytics Apps Script /exec URL (optional;
+#                                     if unset the site simply records nothing)
 # These are non-secret identifiers; security comes from the pool's repo+ref binding.
 
 on:
@@ -61,6 +63,9 @@ jobs:
           # The deployed Apps Script /exec URL (a repo Variable, not a Secret —
           # it ships in the client bundle). Build guard fails if unset/placeholder.
           PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
+          # Optional first-party analytics endpoint (separate Apps Script). If the
+          # repo Variable is unset, analytics is simply a no-op — no build failure.
+          PUBLIC_ANALYTICS_ENDPOINT: ${{ vars.PUBLIC_ANALYTICS_ENDPOINT }}
 
       # Install tooling (pinned) BEFORE the credential-exporting auth step, so a
       # compromised firebase-tools release can't run with ADC in scope.

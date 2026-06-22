@@ -10,7 +10,7 @@ const description =
 const path = '/privacy/';
 
 // Keep the displayed date in one place.
-const LAST_UPDATED = 'June 20, 2026';
+const LAST_UPDATED = 'June 22, 2026';
 ---
 
 <BaseLayout title={title} description={description} path={path}>
@@ -41,7 +41,19 @@ const LAST_UPDATED = 'June 20, 2026';
       </ul>
       <p class="np-legal__p">
         We do not use tracking cookies, advertising pixels, or third-party analytics, and we don't
-        build a profile of your visit. The site loads no third-party scripts.
+        build a profile of you or sell data to anyone. The site loads no third-party scripts.
+      </p>
+
+      <h2 class="np-legal__h2">How we measure the site</h2>
+      <p class="np-legal__p">
+        To understand whether the site is working and which pages are useful, we record a small
+        number of <strong>anonymous, aggregate events</strong> &mdash; page views, inquiry-form
+        submissions, and clicks on our phone number &mdash; to a private Google Sheet inside our own
+        Google Workspace. These events carry <strong>no name, email, address, or message content</strong>.
+        We store only the page path, the referring site's domain (not a full web address), and a
+        random per-visit id that lives in your browser tab and is cleared when you close it &mdash;
+        it is not a cookie and is never used to track you across sites. There are no third parties
+        involved, and nothing here identifies you.
       </p>
 
       <h2 class="np-legal__h2">Why we collect it</h2>

@@ -15,7 +15,7 @@ const id = (field: string) => `${ns}-${field}`;
 ---
 
 <div class="np-form-wrap" data-form-root>
-  <form class="np-form" data-np-form>
+  <form class="np-form" data-np-form data-variant={variant}>
     {/* Honeypot — visually hidden, off-screen, not tabbable, not announced.
         Named "np_hp" (not company/organization) so password managers don't
         autofill it and false-flag a real visitor. The Apps Script drops any
@@ -203,10 +203,12 @@ const id = (field: string) => `${ns}-${field}`;
 
 <script>
   import { FORM_ENDPOINT, isRealEndpoint, PHONE_DISPLAY, PHONE_TEL, EMAIL } from '../data/site.ts';
+  import { track } from '../lib/analytics.ts';
 
   // Wire every inquiry form on the page (hero + contact share this logic).
   document.querySelectorAll<HTMLFormElement>('[data-np-form]').forEach((form) => {
     const root = form.closest('[data-form-root]');
+    const variant = form.getAttribute('data-variant') || '';
     const success = root?.querySelector<HTMLElement>('[data-np-success]');
     const notice = root?.querySelector<HTMLElement>('[data-np-notice]');
     const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
@@ -280,6 +282,9 @@ const id = (field: string) => `${ns}-${field}`;
       })
         .then(() => {
           showSuccess();
+          // Count only genuine, sent submissions — not the honeypot/bot path
+          // or preview mode (both return before reaching here).
+          track('form_submit', variant);
         })
         .catch(() => {
           restoreBtn();
