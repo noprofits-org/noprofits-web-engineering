@@ -20,7 +20,7 @@
 
 var LEADS_SHEET = 'Leads';
 var COL = { NAME: 2, ORG: 3, EMAIL: 4, STATUS: 8 }; // 1-based; STATUS = column H
-var REPLY_TO = 'hello@noprofits.org';
+var REPLY_TO = 'peter@noprofits.org';
 var FROM_NAME = 'noprofits.org';
 var EMAIL_RE = /^[^\s@'"]+@[^\s@'"]+\.[^\s@'"]+$/;
 

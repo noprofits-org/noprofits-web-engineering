@@ -13,7 +13,7 @@ export const SITE_DESCRIPTION =
 /** Contact details, defined once and reused across header, footer, forms. */
 export const PHONE_DISPLAY = '206-532-6395';
 export const PHONE_TEL = '+12065326395';
-export const EMAIL = 'hello@noprofits.org';
+export const EMAIL = 'peter@noprofits.org';
 
 /** Service area — reused in homepage copy and JSON-LD areaServed. */
 export const AREA_SERVED = 'Greater Seattle and the Puget Sound region';
