@@ -21,15 +21,18 @@ name: Deploy to Firebase Hosting
 #   5. Set repo VARIABLES (Settings ▸ Secrets and variables ▸ Actions ▸ Variables):
 #         GCP_WIF_PROVIDER    = projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>
 #         GCP_DEPLOY_SA       = <sa>@noprofits-web.iam.gserviceaccount.com
-#         PUBLIC_FORM_ENDPOINT = the deployed Apps Script /exec URL
-#         PUBLIC_ANALYTICS_ENDPOINT = the analytics Apps Script /exec URL (optional;
-#                                     if unset the site simply records nothing)
+#         PUBLIC_FORM_ENDPOINT = the deployed Apps Script /exec URL (also receives
+#                                the first-party analytics beacon — one endpoint)
 # These are non-secret identifiers; security comes from the pool's repo+ref binding.
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Daily rebuild so the public stats page (/stats/) re-bakes fresh analytics
+  # data from the sheet even with no code change. 13:00 UTC ≈ 6am PT.
+  schedule:
+    - cron: '0 13 * * *'
 
 permissions:
   contents: read
@@ -62,10 +65,14 @@ jobs:
         env:
           # The deployed Apps Script /exec URL (a repo Variable, not a Secret —
           # it ships in the client bundle). Build guard fails if unset/placeholder.
+          # The analytics beacon shares this same endpoint, so there is nothing
+          # else to wire — set this one and both the form and analytics work.
           PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
-          # Optional first-party analytics endpoint (separate Apps Script). If the
-          # repo Variable is unset, analytics is simply a no-op — no build failure.
-          PUBLIC_ANALYTICS_ENDPOINT: ${{ vars.PUBLIC_ANALYTICS_ENDPOINT }}
+          # Dashboard read secret. Used ONLY at build time by scripts/fetch-stats.mjs
+          # to bake /stats/ data into the static page (never ships to the client).
+          # A real Secret (not a Variable) — set the same value in the Apps Script
+          # project's DASH_TOKEN Script Property. If unset, /stats/ keeps its seed.
+          DASH_TOKEN: ${{ secrets.DASH_TOKEN }}
 
       # Install tooling (pinned) BEFORE the credential-exporting auth step, so a
       # compromised firebase-tools release can't run with ADC in scope.

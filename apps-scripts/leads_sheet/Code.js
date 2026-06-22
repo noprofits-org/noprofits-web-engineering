@@ -4,6 +4,20 @@
  * Receives form POSTs from the marketing site, drops bot submissions,
  * appends each lead to the "Leads" tab, and emails a notification.
  *
+ * ALSO logs first-party, cookieless site analytics. A beacon POST that carries
+ * an event type `t` (pageview / form_submit / tel_click) is recorded to a
+ * separate "Events" tab in this same spreadsheet and returns early — it never
+ * touches the lead or email path. A POST carrying the DASH_TOKEN (in the body,
+ * never the URL) returns aggregated event counts as JSON for the public stats
+ * dashboard; doGet is just a liveness check.
+ *
+ * QUOTA NOTE (POC): leads + analytics deliberately share ONE script and ONE
+ * sheet here to keep setup dead simple. Apps Script quotas are per-project, so
+ * on a higher-traffic site a flood of analytics events could burn the execution
+ * quota and starve the mission-critical lead pipeline. If that ever becomes a
+ * risk, split analytics back into its own standalone script (openById on this
+ * sheet) so it gets an independent quota bucket and blast radius.
+ *
  * Deploy:  Deploy ▸ New deployment ▸ Web app
  *          Execute as:        Me (peter@noprofits.org)
  *          Who has access:    Anyone
@@ -42,9 +56,33 @@ var MAX = {                    // per-field length caps (chars)
 };
 var EMAIL_RE = /^[^\s@'"]+@[^\s@'"]+\.[^\s@'"]+$/;
 
+// --- Analytics (same script + sheet as leads, for this POC) -------------------
+var EVENTS_SHEET = 'Events';
+// Event types recorded; unknown types are silently dropped. pageview /
+// form_submit / tel_click are wired today; form_start / form_view are accepted
+// now so the funnel can be extended client-side with no redeploy.
+var ALLOWED_TYPES = { pageview: 1, form_submit: 1, tel_click: 1, form_start: 1, form_view: 1 };
+var EVENT_RATE_LIMIT_PER_MIN = 600; // events/min across all callers; beyond this, drop quietly
+var EVENT_MAX = { type: 40, path: 300, ref: 200, detail: 120, session: 64 };
+
 function doPost(e) {
   try {
     var p = (e && e.parameter) || {};
+
+    // Dashboard read path: a POST carrying the dashboard token (and no event
+    // type) returns aggregated analytics JSON. The token travels in the POST
+    // BODY, never the URL, so it can't leak via request-line/access logs.
+    // Fail-closed: a wrong/missing token returns only {error:'unauthorized'}.
+    if (p.token) {
+      var dashToken = PropertiesService.getScriptProperties().getProperty('DASH_TOKEN');
+      var out = (dashToken && p.token === dashToken) ? aggregateEvents_() : { error: 'unauthorized' };
+      return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Analytics beacon path: any POST carrying an event type `t` is an anonymous,
+    // aggregate analytics event — NOT a lead. Logged to the Events tab and
+    // returned early so traffic events never reach the lead/email path.
+    if (p.t) return logEvent_(p);
 
     // Honeypot — bots fill the hidden "np_hp" field. Accept silently, drop.
     // (Named np_hp, not "company"/"organization", so password managers don't
@@ -126,6 +164,106 @@ function doPost(e) {
   }
 }
 
+/**
+ * Record one anonymous analytics event to the Events tab. Fail-soft by design:
+ * unknown types, floods, and errors all just drop quietly — analytics is
+ * non-critical and must never interfere with (or surface errors to) the page.
+ *
+ * A beacon carries: t = type · p = path · r = referrer HOST only · d = detail ·
+ * s = per-tab session id. NO name/email/message ever — that's the lead path.
+ */
+function logEvent_(p) {
+  try {
+    var type = clamp_(p.t, EVENT_MAX.type);
+    if (!ALLOWED_TYPES[type]) return ContentService.createTextOutput('ok'); // unknown — drop
+
+    // Coarse per-minute flood guard. Own counter, separate from the lead rate
+    // limit (rl_) so analytics traffic can't throttle the lead path or vice versa.
+    var cache = CacheService.getScriptCache();
+    var minuteKey = 'arl_' + Math.floor(Date.now() / 60000);
+    var hits = Number(cache.get(minuteKey) || 0);
+    cache.put(minuteKey, hits + 1, 120);
+    if (hits >= EVENT_RATE_LIMIT_PER_MIN) return ContentService.createTextOutput('ok');
+
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(EVENTS_SHEET) || ss.insertSheet(EVENTS_SHEET);
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['Timestamp', 'Type', 'Path', 'Referrer', 'Detail', 'Session']);
+    }
+    // Neutralize formula-injection on EVERY attacker-controlled field so a
+    // leading = + - @ (or tab/CR) can't become a live formula on open/export.
+    sheet.appendRow([
+      new Date(),
+      neutralize_(type),
+      neutralize_(clamp_(p.p, EVENT_MAX.path)),
+      neutralize_(clamp_(p.r, EVENT_MAX.ref)),
+      neutralize_(clamp_(p.d, EVENT_MAX.detail)),
+      neutralize_(clamp_(p.s, EVENT_MAX.session))
+    ]);
+    return ContentService.createTextOutput('ok');
+  } catch (err) {
+    console.error(err);
+    return ContentService.createTextOutput('ok'); // never surface analytics errors
+  }
+}
+
+/**
+ * Roll the Events tab up into the shape the dashboard consumes:
+ *   totals    — { pageview, form_submit, tel_click, visits }
+ *   daily     — [{ date, pageview, form_submit, tel_click, visits }] (chronological)
+ *   referrers — [{ host, count }] top sources by pageview (blank/internal excluded)
+ * "visits" = distinct non-empty session ids (a sessionStorage tab id), so it
+ * approximates unique visits without any cookie or cross-site identifier.
+ */
+function aggregateEvents_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(EVENTS_SHEET);
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { totals: { pageview: 0, form_submit: 0, tel_click: 0, visits: 0 },
+             daily: [], referrers: [], generatedAt: new Date().toISOString(), source: 'live' };
+  }
+  // Columns: 1 Timestamp · 2 Type · 4 Referrer · 6 Session.
+  var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+  var tz = Session.getScriptTimeZone();
+  var totals = { pageview: 0, form_submit: 0, tel_click: 0, visits: 0 };
+  var byDay = {};            // date -> { pageview, form_submit, tel_click, sessions:{} }
+  var allSessions = {};      // distinct sessions overall
+  var refCounts = {};        // referrer host -> pageview count
+
+  rows.forEach(function (r) {
+    var type = r[1];
+    if (!type) return;
+    var ref = r[3];
+    var session = r[5];
+    if (totals[type] === undefined) totals[type] = 0;
+    totals[type]++;
+
+    var day = Utilities.formatDate(new Date(r[0]), tz, 'yyyy-MM-dd');
+    var d = byDay[day] || (byDay[day] = { pageview: 0, form_submit: 0, tel_click: 0, sessions: {} });
+    if (d[type] === undefined) d[type] = 0;
+    d[type]++;
+
+    if (session) { d.sessions[session] = 1; allSessions[session] = 1; }
+    if (type === 'pageview' && ref) { refCounts[ref] = (refCounts[ref] || 0) + 1; }
+  });
+
+  totals.visits = Object.keys(allSessions).length;
+
+  var daily = Object.keys(byDay).sort().map(function (day) {
+    var d = byDay[day];
+    return { date: day, pageview: d.pageview || 0, form_submit: d.form_submit || 0,
+             tel_click: d.tel_click || 0, visits: Object.keys(d.sessions).length };
+  });
+
+  var referrers = Object.keys(refCounts)
+    .map(function (h) { return { host: h, count: refCounts[h] }; })
+    .sort(function (a, b) { return b.count - a.count; })
+    .slice(0, 8);
+
+  return { totals: totals, daily: daily, referrers: referrers,
+           generatedAt: new Date().toISOString(), source: 'live' };
+}
+
 /** Coerce to string and hard-cap length. */
 function clamp_(v, max) {
   v = (v == null) ? '' : String(v);
@@ -160,7 +298,12 @@ function oneLine_(v) {
 //   return !!(JSON.parse(res.getContentText()) || {}).success;
 // }
 
-/** Optional sanity check — visiting the /exec URL in a browser returns this. */
+/**
+ * Liveness check — visiting the /exec URL in a browser returns this. The
+ * analytics dashboard is read via POST (token in the body), NOT GET, so the
+ * secret never appears in a URL/query string. DASH_TOKEN lives in Project
+ * Settings ▸ Script Properties (a long random secret).
+ */
 function doGet() {
-  return ContentService.createTextOutput('noprofits.org lead endpoint is live.');
+  return ContentService.createTextOutput('noprofits.org endpoint is live.');
 }

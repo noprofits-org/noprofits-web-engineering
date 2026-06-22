@@ -47,25 +47,7 @@ export const FORM_ENDPOINT =
 
 /**
  * True only when FORM_ENDPOINT points at a real deployed Apps Script web app.
- * Drives whether the forms actually POST or just show the preview notice.
+ * Drives whether the forms actually POST or just show the preview notice — and,
+ * since analytics shares the same endpoint, whether the analytics beacon fires.
  */
 export const isRealEndpoint = FORM_ENDPOINT.startsWith('https://script.google.com');
-
-// -----------------------------------------------------------------------------
-// ANALYTICS_ENDPOINT — the first-party analytics beacon target (a SEPARATE
-// Apps Script web app from FORM_ENDPOINT; see apps-scripts/analytics/).
-//
-// Injected at BUILD TIME from PUBLIC_ANALYTICS_ENDPOINT (a GitHub Actions repo
-// *variable* in CI; a local .env for dev). Like FORM_ENDPOINT it ships in the
-// client bundle anyway, so keeping it out of the repo just closes the
-// bot-harvest path.
-//
-// Unlike the form endpoint this is OPTIONAL: when unset, isRealAnalyticsEndpoint
-// is false and every track() call is a no-op — the site builds and runs exactly
-// the same with analytics off. No build guard.
-// -----------------------------------------------------------------------------
-export const ANALYTICS_ENDPOINT = import.meta.env.PUBLIC_ANALYTICS_ENDPOINT ?? '';
-
-/** True only when ANALYTICS_ENDPOINT points at a real deployed Apps Script app. */
-export const isRealAnalyticsEndpoint =
-  ANALYTICS_ENDPOINT.startsWith('https://script.google.com');
