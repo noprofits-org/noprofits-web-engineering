@@ -6,19 +6,19 @@ import { EMAIL, SITE_NAME, SITE_URL } from '../../data/site.ts';
 
 const title = 'Collect inquiries: forms that email you | noprofits.org';
 const description =
-  'How a website form can save every submission to a Google Sheet and email your team automatically — no database, no monthly fees. A plain-English guide.';
+  'How a website form can save every submission to a Google Sheet and email your team automatically — plus private, cookieless visitor stats in the same place. No database, no monthly fees. A plain-English guide.';
 const path = '/guides/forms-that-email-you/';
 
 const articleLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'Collect inquiries with a form that emails you',
+  headline: 'Collect inquiries and visitor stats with a form that emails you',
   description,
   url: new URL(path, SITE_URL).href,
   publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
   author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
   datePublished: '2026-06-20',
-  dateModified: '2026-06-20',
+  dateModified: '2026-06-22',
   image: new URL('/og-image.png', SITE_URL).href,
   inLanguage: 'en',
 };
@@ -47,12 +47,14 @@ const articleLd = {
         <span class="np-article__tag">Free guide · Forms</span>
       </div>
 
-      <h1 class="np-article__h1">Collect inquiries with a form that emails you</h1>
+      <h1 class="np-article__h1">Collect inquiries and visitor stats with a form that emails you</h1>
       <p class="np-article__lead">
         When someone fills out a form on your site — a volunteer sign-up, a contact request, an
         event RSVP — you want two things to happen: a record you can look back on, and a heads-up
         in your inbox right away. You can have both, for free, using tools your Google Workspace
-        already includes. No database, no monthly add-on.
+        already includes. No database, no monthly add-on. The same setup can also keep a private
+        tally of how many people visit and reach out — without cookies, Google Analytics, or any
+        third party watching your supporters.
       </p>
 
       <h2 class="np-article__h2">How it works, in plain terms</h2>
@@ -112,6 +114,32 @@ const articleLd = {
           <li>Test submission confirmed in Sheet and inbox</li>
         </ul>
       </div>
+
+      <h2 class="np-article__h2">See how many people find you — privately</h2>
+      <p class="np-article__p">
+        A form tells you who reached out. It can't tell you how many people <em>visited</em> first,
+        or where they came from. For that, most sites reach for Google Analytics — which means a
+        third-party script, tracking cookies, and a profile of every supporter handed to an
+        advertising company. You don't have to make that trade.
+      </p>
+      <p class="np-article__p">
+        We can record a few <strong>anonymous, aggregate events</strong> the same way the form
+        works: a small Google script counts them into a tab in the very same Sheet. No third parties,
+        no cookies, nothing that identifies a single person. Three things get tallied:
+      </p>
+      <ul class="np-article__ul">
+        <li><strong>Page views</strong> — how many times each page was opened, and the domain that referred them (e.g. google.com), never a full web address.</li>
+        <li><strong>Form submissions</strong> — counted only when a real inquiry is actually sent, so you can see how many visitors turn into leads.</li>
+        <li><strong>Phone-number clicks</strong> — every tap on your listed number, the calls a form would otherwise miss.</li>
+      </ul>
+      <p class="np-article__p">
+        There are no names, emails, or messages in this tally — that's the form's job, kept separate.
+        To tell a fresh visit from a page someone simply reloaded, the site uses a random id that
+        lives in the browser tab and is erased the moment the tab closes. It is not a cookie and is
+        never used to follow anyone across the web. Point a free dashboard like Looker Studio at the
+        same Sheet and you have a private, plain-English picture of whether your site is working —
+        with the privacy promise fully intact.
+      </p>
 
       <p class="np-article__foot">
         noprofits.org · Free websites for non-profits across greater Seattle · {EMAIL}

@@ -47,6 +47,7 @@ export const FORM_ENDPOINT =
 
 /**
  * True only when FORM_ENDPOINT points at a real deployed Apps Script web app.
- * Drives whether the forms actually POST or just show the preview notice.
+ * Drives whether the forms actually POST or just show the preview notice — and,
+ * since analytics shares the same endpoint, whether the analytics beacon fires.
  */
 export const isRealEndpoint = FORM_ENDPOINT.startsWith('https://script.google.com');
