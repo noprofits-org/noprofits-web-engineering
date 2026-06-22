@@ -29,10 +29,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Daily rebuild so the public stats page (/stats/) re-bakes fresh analytics
-  # data from the sheet even with no code change. 13:00 UTC ≈ 6am PT.
-  schedule:
-    - cron: '0 13 * * *'
 
 permissions:
   contents: read
@@ -68,11 +64,10 @@ jobs:
           # The analytics beacon shares this same endpoint, so there is nothing
           # else to wire — set this one and both the form and analytics work.
           PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
-          # Dashboard read secret. Used ONLY at build time by scripts/fetch-stats.mjs
-          # to bake /stats/ data into the static page (never ships to the client).
-          # A real Secret (not a Variable) — set the same value in the Apps Script
-          # project's DASH_TOKEN Script Property. If unset, /stats/ keeps its seed.
-          DASH_TOKEN: ${{ secrets.DASH_TOKEN }}
+          # The live analytics dashboard's /exec URL (a separate standalone Apps
+          # Script, gated "Anyone with a Google account"). A public link, so a
+          # Variable, not a Secret. If unset, the /stats page omits the button.
+          PUBLIC_DASH_URL: ${{ vars.PUBLIC_DASH_URL }}
 
       # Install tooling (pinned) BEFORE the credential-exporting auth step, so a
       # compromised firebase-tools release can't run with ADC in scope.
