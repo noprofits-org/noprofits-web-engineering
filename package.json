@@ -8,6 +8,7 @@
     "start": "astro dev",
     "build": "astro build && node scripts/gen-csp.mjs",
     "preview": "astro preview",
+    "edit": "node tools/site-editor/server.mjs",
     "astro": "astro",
     "deploy": "npm run build && firebase deploy --only hosting --project noprofits-web"
   },
