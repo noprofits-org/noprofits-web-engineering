@@ -1,0 +1,19 @@
+{
+  "name": "noprofits-cms-functions",
+  "description": "Auth-gated, PR-gated content editor API + admin UI (Cloud Functions for Firebase)",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "sync-engine": "node -e \"require('fs').copyFileSync('../tools/site-editor/extract.mjs','./engine.mjs')\"",
+    "test": "node cms-core.test.mjs",
+    "deploy": "npm run sync-engine && npm test && firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "firebase-functions": "^6.1.0"
+  }
+}

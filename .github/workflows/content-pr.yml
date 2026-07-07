@@ -1,0 +1,43 @@
+name: Verify content PR
+
+# Runs on pull requests from the CMS editor branch (cms/*). Two gates:
+#   1. verify-content-pr.mjs proves the diff is PURE text-block edits —
+#      byte-for-byte reproducible through the editor engine, nothing outside
+#      editable spans, no files other than routed pages. This holds even if
+#      the CMS GitHub token were stolen: arbitrary code pushed to cms/edits
+#      fails here, loudly, before a reviewer ever hits merge.
+#   2. the site still builds.
+#
+# No secrets are used or exposed in this workflow.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: startsWith(github.head_ref, 'cms/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify diff is pure text-block edits
+        run: node scripts/verify-content-pr.mjs origin/${{ github.base_ref }} HEAD
+
+      - name: Engine security tests
+        run: node tools/site-editor/security.test.mjs
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: ALLOW_PLACEHOLDER_ENDPOINT=true npm run build
