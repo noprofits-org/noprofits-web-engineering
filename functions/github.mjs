@@ -1,7 +1,8 @@
 // github.mjs — minimal GitHub REST client for the CMS function (fetch-only,
-// no SDK). Scope of the token: fine-grained PAT, ONE repo, permissions
-// Contents:RW + Pull requests:RW. Nothing here can touch other repos even if
-// the function is fully compromised.
+// no SDK). Scope of the token: classic public_repo PAT (no workflow scope) on
+// a non-admin machine account whose only write access is this one repo — see
+// docs/cms.md step 4 for why it can't be fine-grained. Even fully compromised,
+// the function can't bypass branch protection or reach other repos.
 
 const API = 'https://api.github.com';
 
