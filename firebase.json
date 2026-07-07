@@ -1,4 +1,8 @@
 {
+  "functions": {
+    "source": "functions",
+    "predeploy": "npm --prefix functions run sync-engine && npm --prefix functions test"
+  },
   "hosting": {
     "public": "dist",
     "ignore": [

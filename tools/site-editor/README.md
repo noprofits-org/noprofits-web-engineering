@@ -61,8 +61,25 @@ only plain string literals are editable. Inline HTML *around* text
 (`<em>…</em>` splitting a sentence) stays in the source, so a paragraph with
 inline markup appears as a few consecutive blocks rather than one.
 
+## Security
+
+Saved text can never become markup or code: `& < >` are entity-encoded in
+every HTML context, braces are encoded to `&#123;/&#125;` (Astro evaluates
+raw `{…}` in templates as build-time JS — a real RCE vector for a CMS),
+attribute quotes are encoded, template-literal props get `` ` ``/`${` escaped,
+and frontmatter strings get angle brackets written as `\u003c`/`\u003e`
+escapes so they can't break out of `<title>`/JSON-LD blocks. `security.test.mjs` attacks every
+block kind and must stay green: `node tools/site-editor/security.test.mjs`.
+
+There is also a **hosted, auth-gated, PR-gated variant** of this editor
+(Cloud Functions for Firebase + GitHub-backed saves) — see `docs/cms.md`.
+The local server here shares the same engine but writes to disk directly and
+binds to 127.0.0.1: it is a solo dev tool, not multi-user.
+
 ## Files
 
 - `server.mjs` — HTTP server + save endpoint (`PORT`/`HOST` env to override)
 - `extract.mjs` — .astro parsing, text-block extraction, offset-safe splice-back
+  (synced into `functions/engine.mjs` for the hosted variant)
 - `app.html` — the canvas node map + editor drawer (no build step, no CDN)
+- `security.test.mjs` — adversarial tests for the splice-back engine
