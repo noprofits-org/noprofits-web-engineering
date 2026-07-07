@@ -36,7 +36,10 @@ const AUTH_DOMAIN = process.env.CMS_AUTH_DOMAIN
   || `${process.env.GCLOUD_PROJECT}.firebaseapp.com`;
 
 // ---- admin UI: one static page, config injected, inline script hash-pinned
-const rawHtml = readFileSync(new URL('./admin.html', import.meta.url), 'utf8');
+// CRLF→LF up front: browsers hash inline scripts AFTER the HTML parser
+// normalizes line endings, so serving CRLF would break the hash-pinned CSP.
+const rawHtml = readFileSync(new URL('./admin.html', import.meta.url), 'utf8')
+  .replace(/\r\n/g, '\n');
 const adminHtml = rawHtml.replace('"__FB_CONFIG__"', JSON.stringify({
   apiKey: WEB_API_KEY,
   authDomain: AUTH_DOMAIN,
@@ -49,7 +52,8 @@ const ADMIN_CSP = [
   "base-uri 'none'",
   "object-src 'none'",
   "frame-ancestors 'none'",
-  `script-src ${scriptHashes.join(' ')} https://www.gstatic.com`,
+  // apis.google.com: gapi iframe loader, required by signInWithPopup
+  `script-src ${scriptHashes.join(' ')} https://www.gstatic.com https://apis.google.com`,
   "style-src 'unsafe-inline'",
   "img-src 'self' data: https://*.googleusercontent.com",
   "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
@@ -76,6 +80,10 @@ export const cms = onRequest(
   {
     region: 'us-central1',
     secrets: [githubToken],
+    // Public at the HTTP layer by design — every request is auth-gated in-app
+    // via Firebase ID token + allowlist (see requireEditor). Requires the
+    // project-level org-policy exception on iam.allowedPolicyMemberDomains.
+    invoker: 'public',
     maxInstances: 2,
     memory: '256MiB',
     timeoutSeconds: 60,

@@ -3,47 +3,77 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F7F4EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121A16" media="(prefers-color-scheme: dark)">
 <title>NoProfits — Site Map Editor</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+  })();
+</script>
 <style>
   :root{
-    --bg:#161311; --panel:#1f1b18; --panel-2:#282320; --line:#3a332e;
-    --ink:#f2ede8; --ink-2:#b8afa6; --ink-3:#7d746b;
-    --ember:#e2562a; --ember-bright:#ff7a4d;
-    --home:#ff7a4d; --services:#3fb6a8; --guides:#5b9bd9; --cities:#d9a441; --other:#9b8ff2;
+    --accent:#2F7DA3; --accent-deep:#1C5572; --on-accent:#fff;
+    --sky-mid:#5B9FC0; --sky-soft:#CFE6EF; --sky-tint:#EAF3F7;
+    --forest:#143F33; --mint:#9FD0BF; --terracotta:#C8632E; --req:#B0551F;
+    --cream:#F7F4EE; --offwhite:#FBFAF6; --white:#fff;
+    --border:#ECE6DA; --border-strong:#DCD5C8; --header-veil:rgba(247,244,238,.85);
+    --text:#16221D; --slate:#43504A; --muted:#5A665F; --faint:#67726B;
+    --bg:var(--cream); --panel:var(--offwhite); --panel-2:var(--white); --canvas:var(--sky-tint);
+    --line:var(--border); --line-strong:var(--border-strong);
+    --ink:var(--text); --ink-2:var(--slate); --ink-3:var(--faint);
+    --accent-soft:var(--sky-tint); --alert:var(--req);
+    --home:var(--accent); --success:#1D7A46; --danger:#B54747;
+    color-scheme:light;
+  }
+  [data-theme='dark']{
+    --accent:#5B9FC0; --accent-deep:#9CC8DE; --on-accent:#0F1A14;
+    --sky-mid:#5B9FC0; --sky-soft:#24404F; --sky-tint:#1A2A33;
+    --forest:#143F33; --mint:#9FD0BF; --terracotta:#D97E4A; --req:#E08A57;
+    --cream:#121A16; --offwhite:#18231E; --white:#1E2A24;
+    --border:#26332C; --border-strong:#32403A; --header-veil:rgba(18,26,22,.85);
+    --text:#E9ECE8; --slate:#C2CCC6; --muted:#9DAAA3; --faint:#8A968F;
+    --success:#7FC98F; --danger:#E58A8A;
+    color-scheme:dark;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;overflow:hidden}
+  body{background:var(--bg);color:var(--ink);font:14px/1.55 'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--sky-soft)}
   #bar{position:fixed;inset:0 0 auto 0;z-index:5;display:flex;align-items:center;gap:16px;
-       padding:10px 16px;background:rgba(22,19,17,.88);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-  #bar h1{font-size:14px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
-  #bar h1 .em{color:var(--ember-bright)}
+       padding:12px 18px;background:var(--header-veil);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  #bar h1{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:16px;font-weight:800;letter-spacing:0;white-space:nowrap}
+  #bar h1 .em{color:var(--muted);font-weight:700}
   #stats{color:var(--ink-3);font-size:12px;white-space:nowrap}
-  #search{flex:0 1 260px;min-width:120px;background:var(--panel);border:1px solid var(--line);border-radius:6px;
-          color:var(--ink);padding:6px 10px;font-size:13px;outline:none}
-  #search:focus{border-color:var(--ember)}
+  #search{flex:0 1 260px;min-width:120px;background:var(--white);border:1px solid var(--line-strong);border-radius:10px;
+          color:var(--ink);padding:10px 12px;font-size:16px;outline:none}
+  #search:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(47,125,163,.16)}
   #legend{display:flex;gap:12px;margin-left:auto;font-size:11.5px;color:var(--ink-2);flex-wrap:wrap}
   #legend span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
   #legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
   #hint{color:var(--ink-3);font-size:11.5px;white-space:nowrap}
-  #map{position:fixed;inset:0;cursor:grab}
+  #map{position:fixed;inset:0;cursor:grab;background:var(--canvas)}
   #map.dragging{cursor:grabbing}
   #tip{position:fixed;z-index:6;pointer-events:none;background:var(--panel-2);border:1px solid var(--line);
-       border-radius:8px;padding:8px 11px;max-width:320px;box-shadow:0 8px 30px rgba(0,0,0,.5);display:none}
+       border-radius:10px;padding:8px 11px;max-width:320px;box-shadow:0 12px 28px rgba(20,63,51,.16);display:none}
   #tip .t{font-weight:600;font-size:13px;margin-bottom:2px}
-  #tip .r{color:var(--ember-bright);font-size:12px;font-family:ui-monospace,monospace}
+  #tip .r{color:var(--accent-deep);font-size:12px;font-family:ui-monospace,monospace}
   #tip .m{color:var(--ink-3);font-size:11.5px;margin-top:3px}
 
   /* ---- editor drawer ---- */
   #overlay{position:fixed;inset:0;z-index:9;background:rgba(0,0,0,.45);display:none}
   #drawer{position:fixed;z-index:10;top:0;right:0;bottom:0;width:min(760px,96vw);display:none;
           flex-direction:column;background:var(--panel);border-left:1px solid var(--line);
-          box-shadow:-20px 0 60px rgba(0,0,0,.55)}
+          box-shadow:-10px 0 28px rgba(0,0,0,.16)}
   #drawer.open,#overlay.open{display:flex}
   #overlay.open{display:block}
   #dhead{padding:16px 22px 12px;border-bottom:1px solid var(--line)}
-  #dhead .route{color:var(--ember-bright);font-family:ui-monospace,monospace;font-size:13px}
-  #dhead h2{font-size:17px;font-weight:700;margin:4px 0 2px;line-height:1.3}
+  #dhead .route{color:var(--accent-deep);font-family:ui-monospace,monospace;font-size:13px}
+  #dhead h2{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:24px;font-weight:800;margin:4px 0 2px;line-height:1.12}
   #dhead .file{color:var(--ink-3);font-size:11.5px;font-family:ui-monospace,monospace}
   #dclose{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--ink-3);
           font-size:22px;cursor:pointer;line-height:1;padding:6px}
@@ -56,21 +86,22 @@
   .grouphead.closed .car{transform:rotate(-90deg)}
   .block{margin-bottom:10px}
   .block .lab{font-size:10.5px;font-family:ui-monospace,monospace;color:var(--ink-3);margin-bottom:3px;
-              display:inline-block;background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 7px}
-  .block.dirty .lab{color:var(--ember-bright);border-color:var(--ember)}
+              display:inline-block;background:var(--accent-soft);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+  .block.dirty .lab{color:var(--alert);border-color:var(--alert)}
   .block textarea{display:block;width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;
-                  color:var(--ink);font:13.5px/1.55 inherit;padding:9px 12px;resize:none;overflow:hidden;outline:none}
-  .block textarea:focus{border-color:#5a4f47}
-  .block.dirty textarea{border-color:var(--ember)}
+                  color:var(--ink);font:16px/1.55 inherit;padding:11px 12px;resize:none;overflow:hidden;outline:none}
+  .block textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(47,125,163,.16)}
+  .block.dirty textarea{border-color:var(--alert)}
   #dfoot{padding:12px 22px;border-top:1px solid var(--line);display:flex;align-items:center;gap:14px}
   #savemsg{color:var(--ink-3);font-size:12.5px;flex:1}
-  #savemsg.ok{color:#7fc98f} #savemsg.err{color:#e77}
-  #save{background:var(--ember);border:0;color:#fff;font-weight:700;font-size:13.5px;border-radius:7px;
-        padding:10px 22px;cursor:pointer;letter-spacing:.02em}
+  #savemsg.ok{color:var(--success)} #savemsg.err{color:var(--danger)}
+  #save{background:var(--accent);border:0;color:var(--on-accent);font-weight:700;font-size:15px;border-radius:12px;
+        min-height:44px;padding:10px 22px;cursor:pointer;letter-spacing:0}
   #save:disabled{background:var(--panel-2);color:var(--ink-3);cursor:default}
-  #save:not(:disabled):hover{background:var(--ember-bright)}
-  #revert{background:none;border:1px solid var(--line);color:var(--ink-2);border-radius:7px;padding:9px 16px;cursor:pointer;font-size:12.5px}
+  #save:not(:disabled):hover{filter:brightness(1.04)}
+  #revert{background:var(--white);border:1px solid var(--line-strong);color:var(--ink-2);border-radius:12px;min-height:44px;padding:9px 16px;cursor:pointer;font-size:13px;font-weight:600}
   #revert:disabled{opacity:.4;cursor:default}
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -102,9 +133,9 @@
 
 <script>
 'use strict';
-// Section colors are assigned as sections are discovered; "home" is always ember.
+// Section colors are assigned as sections are discovered; "home" uses the NoProfits sky accent.
 const PALETTE = ['#3fb6a8', '#5b9bd9', '#d9a441', '#9b8ff2', '#e26a9a', '#7fc98f', '#c9b458', '#6bc5d2'];
-const COLORS = { home: '#ff7a4d' };
+const COLORS = { home: '#2F7DA3' };
 let paletteNext = 0;
 function colorFor(section) {
   if (!COLORS[section]) COLORS[section] = PALETTE[paletteNext++ % PALETTE.length];

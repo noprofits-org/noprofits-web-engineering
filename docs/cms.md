@@ -28,17 +28,29 @@ editor signs in (Firebase Auth, allowlist)
 3. **Web app config** — console ▸ Project settings ▸ Your apps ▸ add a Web
    app; copy the `apiKey` into `functions/.env` (see `functions/.env.example`;
    the apiKey is a public identifier, not a secret).
-4. **GitHub token** — create a **fine-grained PAT** restricted to the
-   `noprofits-org/noprofits-web-engineering` repository only, with
-   *Contents: Read and write* and *Pull requests: Read and write*. Store it:
-   `firebase functions:secrets:set CMS_GITHUB_TOKEN`. It never leaves
-   Secret Manager; the browser never sees it.
+4. **GitHub token** — the token must belong to a **non-admin machine account**
+   (`site-noprofits-org`, a write collaborator), NOT the repo-owner account:
+   branch protection exempts admins, so an admin-owned token could push to
+   `main` and defeat the PR gate. Use a **classic token with only the
+   `public_repo` scope** — fine-grained PATs cannot be granted write on a
+   repo owned by a different personal account (reads appear to "work" only
+   because the repo is public). Store it:
+   `firebase functions:secrets:set CMS_GITHUB_TOKEN`; re-deploy after any
+   rotation (the function pins the secret version at deploy time). It never
+   leaves Secret Manager; the browser never sees it.
 5. **Allowlist** — set `EDITOR_ALLOWLIST` in `functions/.env` (comma-separated
    verified emails). Empty = nobody can edit (fail-closed).
 6. **Branch protection on `main`** — GitHub repo settings: require a pull
-   request with **1 approval** before merging. This is what makes "PR-gated"
-   real; without it the PAT could push to main directly.
-7. Deploy: `cd functions && npm install && npm run deploy`
+   request with **1 approval** before merging (free only on public repos).
+   This is what makes "PR-gated" real; combined with step 4 the CMS token
+   physically cannot reach `main`.
+7. **Org policy** — if the Google Cloud org enforces Domain Restricted
+   Sharing (default on newer Workspace orgs), grant the project an exception
+   so the function can be made publicly invokable
+   (`iam.allowedPolicyMemberDomains` → `allowAll: true` on `noprofits-web`;
+   needs `roles/orgpolicy.policyAdmin` at the org level). The build service
+   account may also need `roles/cloudbuild.builds.builder`.
+8. Deploy: `cd functions && npm install && npm run deploy`
    (syncs the engine, runs unit tests, deploys). The editor URL is the
    function URL; bookmark it.
 
