@@ -66,6 +66,7 @@ var EVENT_RATE_LIMIT_PER_MIN = 600; // events/min across all callers; beyond thi
 var EVENT_MAX = { type: 40, path: 300, ref: 200, detail: 120, session: 64 };
 
 function doPost(e) {
+  var saved = false;
   try {
     var p = (e && e.parameter) || {};
 
@@ -84,10 +85,10 @@ function doPost(e) {
     // returned early so traffic events never reach the lead/email path.
     if (p.t) return logEvent_(p);
 
-    // Honeypot — bots fill the hidden "np_hp" field. Accept silently, drop.
+    // Honeypot — reject without claiming the inquiry was saved.
     // (Named np_hp, not "company"/"organization", so password managers don't
     // autofill it and false-flag a real visitor as a bot.)
-    if (p.np_hp) return ContentService.createTextOutput('ok');
+    if (p.np_hp) return inquiryPage_('rejected');
 
     // Coarse per-minute rate limit shared across all callers. Best-effort
     // (CacheService get/put is not strictly atomic). When tripped we still SAVE
@@ -111,26 +112,39 @@ function doPost(e) {
 
     // Minimal validation — a lead with no name or no way to reply is unusable.
     if (!name || !(validEmail || phone)) {
-      return ContentService.createTextOutput('ignored');
+      return inquiryPage_('invalid');
     }
 
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp', 'Name', 'Organization', 'Email', 'Phone', 'Address', 'Message']);
+    // Serialize duplicate checks and writes. Cache holds only a digest, never PII.
+    var lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      var duplicateKey = 'lead_' + Utilities.base64EncodeWebSafe(Utilities.computeDigest(
+        Utilities.DigestAlgorithm.SHA_256, JSON.stringify([name, org, email, phone, address, message])));
+      if (cache.get(duplicateKey)) return inquiryPage_('saved');
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(['Timestamp', 'Name', 'Organization', 'Email', 'Phone', 'Address', 'Message']);
+      }
+      // Always persist a usable lead. Neutralize formula-injection on EVERY
+      // attacker-controlled field so a leading = + - @ (or tab/CR) can't become a
+      // live formula on open/export.
+      sheet.appendRow([
+        new Date(),
+        neutralize_(name),
+        neutralize_(org),
+        neutralize_(email),
+        neutralize_(phone),
+        neutralize_(address),
+        neutralize_(message)
+      ]);
+      SpreadsheetApp.flush();
+      saved = true;
+      cache.put(duplicateKey, 'saved', 120);
+    } finally {
+      lock.releaseLock();
     }
-    // Always persist a usable lead. Neutralize formula-injection on EVERY
-    // attacker-controlled field so a leading = + - @ (or tab/CR) can't become a
-    // live formula on open/export.
-    sheet.appendRow([
-      new Date(),
-      neutralize_(name),
-      neutralize_(org),
-      neutralize_(email),
-      neutralize_(phone),
-      neutralize_(address),
-      neutralize_(message)
-    ]);
 
     // Send the notification unless throttled or over the daily cap. In both
     // cases the lead is already saved above (so it is never lost); the day
@@ -157,11 +171,31 @@ function doPost(e) {
       props.setProperty(dayKey, String(sentToday + 1));
     }
 
-    return ContentService.createTextOutput('ok');
+    return inquiryPage_('saved');
   } catch (err) {
     console.error(err);
-    return ContentService.createTextOutput('error');
+    return inquiryPage_(saved ? 'saved' : 'uncertain');
   }
+}
+
+/** Static copy only: submitted personal information never enters this HTML. */
+function inquiryPage_(outcome) {
+  var copy = {
+    saved: ['Thank you — your inquiry is saved.', 'We have your inquiry and will review it. A notification email is separate from saving your inquiry; you do not need to submit again.'],
+    invalid: ['Please check your inquiry.', 'Nothing was saved. Include your name and a valid email address or phone number, then return to the form to try again.'],
+    rejected: ['Your inquiry was not saved.', 'The spam check rejected this submission. Return to the form and leave “Leave this field empty” blank, or contact us directly.'],
+    uncertain: ['We could not confirm your inquiry was saved.', 'A problem interrupted submission. It may have been saved. Please contact us to check before trying again.']
+  }[outcome];
+  return HtmlService.createHtmlOutput('<!doctype html><html lang="en"><head>' +
+    '<meta charset="utf-8"><base target="_top"><style>body{margin:0;background:#F7F4EE;color:#16221D;font:18px/1.6 system-ui,sans-serif}' +
+    'main{max-width:38rem;margin:auto;padding:clamp(24px,6vw,72px) 24px}h1{font-size:clamp(28px,5vw,40px);line-height:1.2}' +
+    'a{color:#1C5572;overflow-wrap:anywhere}a:focus-visible{outline:3px solid #1C5572;outline-offset:4px}</style></head>' +
+    '<body><main><p>noprofits.org</p><h1>' + copy[0] + '</h1><p>' + copy[1] + '</p>' +
+    '<p>Contact <a href="mailto:peter@noprofits.org">peter@noprofits.org</a>.</p>' +
+    '<p><a href="https://site.noprofits.org/">Return to site.noprofits.org</a></p>' +
+    '<p>Please use the return link instead of refreshing this page or resending the form.</p></main></body></html>')
+    .setTitle('Inquiry — noprofits.org')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
 /**
